@@ -16,6 +16,7 @@ const float timeStep = 0.1f;
 Control control;
 vector<vec4> vertices;
 vector<vec4> particles;
+vector<GLushort> indices;
 
 vector<vec4> colors;
 vector<vec3> normals;
@@ -162,6 +163,14 @@ void init()
 
 	unsigned int bufferIndex = 0;
 	unsigned int bufferSize = sizeof(vec4) * (vertices.size() + colors.size());
+
+	/*program.Use();
+	{
+		glGenBuffers(1, &elemBuffer);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elemBuffer);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size(), &indices[0], GL_STATIC_DRAW);
+	}
+	program.UnUse();*/
 
 	program.Use();
 	{

@@ -1,12 +1,13 @@
 #include "Cloth.h"
 
-
 Cloth::Cloth(float _x, float _y, int _numX, int _numY)
 {
 	x = _x;
 	y = _y;
 	numX = _numX;
 	numY = _numY;
+	numTriangle = 0;
+	
 	for (int j = 0; j <= numY; j++)
 	{
 		for (int i = 0; i <= numX; i++)
@@ -17,6 +18,47 @@ Cloth::Cloth(float _x, float _y, int _numX, int _numY)
 				((-x / 2)*i + (x / 2)*(numX - i)) / numX, 
 				1,
 				1.0));
+		}
+	}
+
+	
+	for (int j = 0; j <= numY - 1; j++)
+	{
+		for (int i = 0; i <= numX - 1; i++)
+		{
+			int offset = (numX + 1) * j;
+
+			cout << i % 2 << endl;
+			
+			if ((i % 2 == 0) && (j % 2 == 0) || (i % 2 == 1) && (j % 2 == 1))
+			{
+				//upper
+				indices.push_back(i + offset);
+				indices.push_back(i + 1 + offset);
+				indices.push_back(i + numX + 1 + offset);
+				numTriangle++;
+
+				//lower
+				indices.push_back(i + 1 + offset);
+				indices.push_back(i + numX + 1 + offset);
+				indices.push_back(i + numX + 2 + offset);
+				numTriangle++;
+			}
+
+			else
+			{
+				//upper
+				indices.push_back(i + offset);
+				indices.push_back(i + 1 + offset);
+				indices.push_back(i + numX + 2 + offset);
+				numTriangle++;
+
+				//lower
+				indices.push_back(i + offset);
+				indices.push_back(i + numX + 1 + offset);
+				indices.push_back(i + numX + 2 + offset);
+				numTriangle++;
+			}
 		}
 	}
 }
@@ -50,9 +92,20 @@ void Cloth::draw()
 
 	program.Use();
 	{
+		// Draw Lines
+		glBindBuffer(GL_ARRAY_BUFFER, g_verticesBuffer[currentOutput]);
+		glVertexPointer(4, GL_FLOAT, 0, 0);
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexAttribPointer(program["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, 0);
+		for (int i = 0; i < numTriangle; i++)
+			glDrawElements(GL_LINE_LOOP, 3, GL_UNSIGNED_SHORT, &(indices[i * 3]));
+
+
+		// Draw Points
 		glBindBuffer(GL_ARRAY_BUFFER, g_verticesBuffer[currentOutput]);
 		glVertexAttribPointer(program["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, 0);
-		glDrawArrays(GL_POINTS, 0, (numX + 1)*(numY + 1));
+		//glDrawArrays(GL_POINTS, 0, (numX + 1)*(numY + 1));
+		
 		glUniformMatrix4fv(program("ModelView"), 1, GL_TRUE, model_view);
 	}
 	program.UnUse();

@@ -1,5 +1,6 @@
 #pragma once
 #include "Object.h"
+
 class Cloth :
 	public Object
 {
@@ -13,5 +14,6 @@ protected:
 	int numY;
 	float x; // size x
 	float y; // size y
+	int numTriangle;
 };
 

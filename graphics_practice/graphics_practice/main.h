@@ -30,6 +30,7 @@ extern vector<vec4> particles;
 extern vector<vec4> colors;
 extern vector<vec3> normals;
 extern vector<vec2> textures;
+extern vector<GLushort> indices;
 
 extern GLuint g_verticesBuffer[3];
 extern GLuint vertexBuffer;
