@@ -203,6 +203,7 @@ void init()
 	EarthTime = glGetUniformLocation(program, "EarthTime");
 
 	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 	selectedPlanet = 0;
 }
 

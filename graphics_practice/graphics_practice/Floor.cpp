@@ -12,7 +12,14 @@ Floor::Floor(float _x, float _y)
 	{
 		for (int j = -y; j <= y; j++)
 		{
-			vertices.push_back(vec4(i * 0.1, j * 0.1, 0, 1));
+			vertices.push_back(vec4(i * 0.1 - 0.05, j * 0.1 - 0.05, 0, 1));
+			vertices.push_back(vec4(i * 0.1 - 0.05, j * 0.1 + 0.05, 0, 1));
+			vertices.push_back(vec4(i * 0.1 + 0.05, j * 0.1 + 0.05, 0, 1));
+			vertices.push_back(vec4(i * 0.1 + 0.05, j * 0.1 - 0.05, 0, 1));
+
+			colors.push_back(vec4(1, 1, 1, 1));
+			colors.push_back(vec4(1, 1, 1, 1));
+			colors.push_back(vec4(1, 1, 1, 1));
 			colors.push_back(vec4(1, 1, 1, 1));
 			size++;
 		}
@@ -33,7 +40,8 @@ void Floor::draw(bool isSelect)
 	mvstack.push(model_view);
 	glUniformMatrix4fv(isSelect ? sModelView : ModelView, 1, GL_TRUE, model_view);
 
-	glDrawArrays(GL_POINTS, 0, size);
+	for (int i = 0; i < size; i++)
+		glDrawArrays(GL_LINE_LOOP, i * 4, 4);
 	//cout << model_view << endl;
 	
 	model_view = mvstack.pop();
