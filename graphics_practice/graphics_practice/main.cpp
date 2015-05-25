@@ -7,9 +7,11 @@
 #include "SOIL.h"
 #include <cstdlib>
 
-#define ROWS	30
-#define COLS	30
-const float timeStep = 1.0f / 60.0f;
+#define ROWS	20
+#define COLS	20
+#define C_WIDTH	1.5
+#define C_HEIGHT 1.5
+const float timeStep = 0.1f;
 
 Control control;
 vector<vec4> vertices;
@@ -92,13 +94,15 @@ void initShader()
 	computeShader.CreateAndLinkProgram();
 	computeShader.AddUniform("perRow");
 	computeShader.AddUniform("dt");
+	computeShader.AddUniform("structRest");//rest distance of structural spring
+	computeShader.AddUniform("shearRest");//rest distance of shear spring
 }
 void initScene()
 {
 	//바닥 격자점 만들기
 	sceneObject = new Floor(15, 15);
 
-	Cloth * cloth = new Cloth(1.5, 1.5, ROWS, COLS);
+	Cloth * cloth = new Cloth(C_WIDTH, C_HEIGHT, ROWS, COLS);
 	sceneObject->addChild(cloth);
 }
 
@@ -208,6 +212,8 @@ void init()
 	{
 		glUniform1i(computeShader("perRow"), ROWS + 1);
 		glUniform1f(computeShader("dt"), timeStep);
+		glUniform1f(computeShader("structRest"), C_HEIGHT  / ROWS);
+		glUniform1f(computeShader("shearRest"), sqrt(2) * (C_HEIGHT / ROWS));
 	}
 	computeShader.UnUse();
 

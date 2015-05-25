@@ -13,9 +13,9 @@ Cloth::Cloth(float _x, float _y, int _numX, int _numY)
 		{
 			//내분점들을 찍는다. 총 particle은 (numX + 1) * (numY + 1) 개가 된다.
 			particles.push_back(vec4(
-				0,
+				((-y / 2)*j + (y / 2)*(numY - j)) / numY,
 				((-x / 2)*i + (x / 2)*(numX - i)) / numX, 
-				((y / 2)*j + (-y / 2)*(numY - j)) / numY, 
+				1,
 				1.0));
 		}
 	}
@@ -57,7 +57,6 @@ void Cloth::draw()
 	}
 	program.UnUse();
 
-	printf("%d, %d, %d\n",previousInput, currentInput, currentOutput);
 	previousInput = (previousInput + 1) % 3;
 	currentInput = (currentInput + 1) % 3;
 	currentOutput = (currentOutput + 1) % 3;
