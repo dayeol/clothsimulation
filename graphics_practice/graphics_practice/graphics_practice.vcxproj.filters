@@ -24,9 +24,6 @@
     <ClCompile Include="Object.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Planet.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -46,9 +43,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="image_DXT.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Earth.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Floor.cpp">
@@ -72,9 +66,6 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Planet.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
@@ -105,9 +96,6 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="stbi_DDS_aug_c.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Earth.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Floor.h">

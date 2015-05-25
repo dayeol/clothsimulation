@@ -67,7 +67,6 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Control.cpp" />
-    <ClCompile Include="Earth.cpp" />
     <ClCompile Include="Floor.cpp" />
     <ClCompile Include="image_DXT.c" />
     <ClCompile Include="image_helper.c" />
@@ -75,14 +74,12 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="ObjectLoader.cpp" />
-    <ClCompile Include="Planet.cpp" />
     <ClCompile Include="SOIL.c" />
     <ClCompile Include="stb_image_aug.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Control.h" />
-    <ClInclude Include="Earth.h" />
     <ClInclude Include="Floor.h" />
     <ClInclude Include="image_DXT.h" />
     <ClInclude Include="image_helper.h" />
@@ -94,7 +91,6 @@
     <ClInclude Include="MatrixStack.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectLoader.h" />
-    <ClInclude Include="Planet.h" />
     <ClInclude Include="SOIL.h" />
     <ClInclude Include="stbi_DDS_aug.h" />
     <ClInclude Include="stbi_DDS_aug_c.h" />

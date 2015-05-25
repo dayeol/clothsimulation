@@ -2,7 +2,6 @@
 #include "Camera.h"
 #include "Control.h"
 #include "Floor.h"
-#include "Earth.h"
 #include "MatrixStack.h"
 #include "SOIL.h"
 #include <cstdlib>
