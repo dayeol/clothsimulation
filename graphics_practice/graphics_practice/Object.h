@@ -12,8 +12,8 @@ public:
 	Object(void);
 	~Object(void);
 	
-	void traverse(bool isSelect);
-	virtual void draw(bool isSelect)=0;
+	void traverse();
+	virtual void draw()=0;
 
 	//handle hierarchy
 	bool addSibling(Object*);

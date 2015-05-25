@@ -12,10 +12,10 @@ Floor::Floor(float _x, float _y)
 	{
 		for (int j = -y; j <= y; j++)
 		{
-			vertices.push_back(vec4(i * 0.1 - 0.05, j * 0.1 - 0.05, 0, 1));
-			vertices.push_back(vec4(i * 0.1 - 0.05, j * 0.1 + 0.05, 0, 1));
-			vertices.push_back(vec4(i * 0.1 + 0.05, j * 0.1 + 0.05, 0, 1));
-			vertices.push_back(vec4(i * 0.1 + 0.05, j * 0.1 - 0.05, 0, 1));
+			vertices.push_back(vec4(i * 0.1 - 0.05, j * 0.1 - 0.05, -1, 1));
+			vertices.push_back(vec4(i * 0.1 - 0.05, j * 0.1 + 0.05, -1, 1));
+			vertices.push_back(vec4(i * 0.1 + 0.05, j * 0.1 + 0.05, -1, 1));
+			vertices.push_back(vec4(i * 0.1 + 0.05, j * 0.1 - 0.05, -1, 1));
 
 			colors.push_back(vec4(1, 1, 1, 1));
 			colors.push_back(vec4(1, 1, 1, 1));
@@ -34,15 +34,17 @@ Floor::~Floor()
 {
 }
 
-void Floor::draw(bool isSelect)
+void Floor::draw()
 {
-	
 	mvstack.push(model_view);
-	glUniformMatrix4fv(isSelect ? sModelView : ModelView, 1, GL_TRUE, model_view);
 
-	for (int i = 0; i < size; i++)
-		glDrawArrays(GL_LINE_LOOP, i * 4, 4);
-	//cout << model_view << endl;
-	
+	program.Use();
+	{
+		glUniformMatrix4fv(program("ModelView"), 1, GL_TRUE, model_view);
+		for (int i = 0; i < size; i++)
+			glDrawArrays(GL_LINE_LOOP, i * 4, 4);
+	}
+	program.UnUse();
+
 	model_view = mvstack.pop();
 }

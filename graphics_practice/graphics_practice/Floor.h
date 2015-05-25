@@ -8,7 +8,7 @@ public:
 	Floor();
 	Floor(float _x, float _y);
 	~Floor();
-	virtual void draw(bool isSelect);
+	virtual void draw();
 	
 protected:
 	float x; // size x

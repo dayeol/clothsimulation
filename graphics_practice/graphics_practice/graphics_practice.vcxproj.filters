@@ -13,6 +13,30 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="헤더 파일\Angel">
+      <UniqueIdentifier>{80aac61d-5919-4b3a-b36a-e7ab13398075}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\SOIL">
+      <UniqueIdentifier>{63b0e815-1623-407e-8345-5cc944d6df7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Objects">
+      <UniqueIdentifier>{539ef0ab-269d-4c2c-bcf7-3fef8ac6330b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\SOIL">
+      <UniqueIdentifier>{d62726c7-9495-4b7a-963a-eab8a205165c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\shaders">
+      <UniqueIdentifier>{8fc7bf4a-ce13-472f-8603-337b92ad5dca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects">
+      <UniqueIdentifier>{48167a06-e639-452c-8a6b-973fe9cc69bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\GLSLShader">
+      <UniqueIdentifier>{b25ac8bf-a937-4689-9411-b0c78c7c007f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\GLSLShader">
+      <UniqueIdentifier>{ede65f1f-c460-4779-8014-85339d004ebd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -21,51 +45,39 @@
     <ClCompile Include="InitShader.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Object.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Control.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectLoader.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="SOIL.c">
+      <Filter>소스 파일\SOIL</Filter>
     </ClCompile>
     <ClCompile Include="stb_image_aug.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="SOIL.c">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\SOIL</Filter>
     </ClCompile>
     <ClCompile Include="image_helper.c">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\SOIL</Filter>
     </ClCompile>
     <ClCompile Include="image_DXT.c">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\SOIL</Filter>
     </ClCompile>
     <ClCompile Include="Floor.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>소스 파일\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectLoader.cpp">
+      <Filter>소스 파일\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="GLSLShader.cpp">
+      <Filter>소스 파일\GLSLShader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Angel.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\mat.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\vec.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\CheckError.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="main.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Object.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
@@ -77,43 +89,61 @@
     <ClInclude Include="Control.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectLoader.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="include\Angel.h">
+      <Filter>헤더 파일\Angel</Filter>
     </ClInclude>
-    <ClInclude Include="image_DXT.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="include\mat.h">
+      <Filter>헤더 파일\Angel</Filter>
     </ClInclude>
-    <ClInclude Include="image_helper.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="include\vec.h">
+      <Filter>헤더 파일\Angel</Filter>
     </ClInclude>
     <ClInclude Include="SOIL.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>헤더 파일\SOIL</Filter>
     </ClInclude>
     <ClInclude Include="stb_image_aug.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>헤더 파일\SOIL</Filter>
     </ClInclude>
     <ClInclude Include="stbi_DDS_aug.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>헤더 파일\SOIL</Filter>
     </ClInclude>
     <ClInclude Include="stbi_DDS_aug_c.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>헤더 파일\SOIL</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>헤더 파일\Objects</Filter>
     </ClInclude>
     <ClInclude Include="Floor.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>헤더 파일\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CheckError.h">
+      <Filter>헤더 파일\Angel</Filter>
+    </ClInclude>
+    <ClInclude Include="image_DXT.h">
+      <Filter>헤더 파일\SOIL</Filter>
+    </ClInclude>
+    <ClInclude Include="image_helper.h">
+      <Filter>헤더 파일\SOIL</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectLoader.h">
+      <Filter>헤더 파일\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="GLSLShader.h">
+      <Filter>헤더 파일\GLSLShader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="vertex.glsl">
-      <Filter>소스 파일</Filter>
-    </None>
     <None Include="fragment.glsl">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\shaders</Filter>
+    </None>
+    <None Include="vertex.glsl">
+      <Filter>소스 파일\shaders</Filter>
     </None>
     <None Include="select.glsl">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\shaders</Filter>
     </None>
     <None Include="vertex_selected.glsl">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -18,7 +18,7 @@ Camera::Camera()
 	_3dy = 0;
 	_3dz = 0;
 	_3ddist = 5.0f;
-	_3dT = 45;
+	_3dT = 80;
 	_3dW = 90;
 	recalculate3D();
 }

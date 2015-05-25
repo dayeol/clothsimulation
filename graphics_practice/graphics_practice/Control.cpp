@@ -92,20 +92,8 @@ void Control::keyDown(unsigned char key, int x, int y)
 	case 'z':
 		zoomingIn = true;
 		break;
-	case 'o':
-		//행성궤도 토글
-		orbitToggle = -orbitToggle;
-		break;
-	case 'c':
-		//구름 토글
-		enableCloud = -enableCloud;
-		break;
 	case 'p':
 		camera.toggleMode();
-		break;
-	case ' ':
-		//로켓 발사
-		launchRocket();
 		break;
 	case 27:
 		// ESC

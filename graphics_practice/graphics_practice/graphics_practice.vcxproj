@@ -68,6 +68,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Control.cpp" />
     <ClCompile Include="Floor.cpp" />
+    <ClCompile Include="GLSLShader.cpp" />
     <ClCompile Include="image_DXT.c" />
     <ClCompile Include="image_helper.c" />
     <ClCompile Include="InitShader.cpp" />
@@ -81,6 +82,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Control.h" />
     <ClInclude Include="Floor.h" />
+    <ClInclude Include="GLSLShader.h" />
     <ClInclude Include="image_DXT.h" />
     <ClInclude Include="image_helper.h" />
     <ClInclude Include="include\Angel.h" />

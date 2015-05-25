@@ -19,28 +19,21 @@ Object::~Object(void)
 {
 }
 
-void Object::traverse(bool isSelect=false)
+void Object::traverse()
 {
-	glUniform1i(sCode, id);
-
-	if (isSelect)
-	{
-		printf("drew id:%d\n", id);
-	}
 	mvstack.push(model_view);
-
 	model_view = model_view * m;
-	draw(isSelect);
+	draw();
 
 	if(child!=NULL)
 	{
-		child->traverse(isSelect);
+		child->traverse();
 	}
 	model_view = mvstack.pop();
 	
 	if(sibling!=NULL)
 	{
-		sibling->traverse(isSelect);
+		sibling->traverse();
 	}
 }
 
