@@ -13,7 +13,7 @@ Cloth::Cloth(float _x, float _y, int _numX, int _numY)
 		{
 			//내분점들을 찍는다. 총 particle은 (numX + 1) * (numY + 1) 개가 된다.
 			particles.push_back(vec4(
-				((-y / 2)*j + (y / 2)*(numY - j)) / numY,
+				(-y*j) / numY,
 				((-x / 2)*i + (x / 2)*(numX - i)) / numX, 
 				1,
 				1.0));
@@ -50,10 +50,11 @@ void Cloth::draw()
 
 	program.Use();
 	{
+		glUniformMatrix4fv(program("ModelView"), 1, GL_TRUE, model_view);
 		glBindBuffer(GL_ARRAY_BUFFER, g_verticesBuffer[currentOutput]);
 		glVertexAttribPointer(program["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, 0);
+		
 		glDrawArrays(GL_POINTS, 0, (numX + 1)*(numY + 1));
-		glUniformMatrix4fv(program("ModelView"), 1, GL_TRUE, model_view);
 	}
 	program.UnUse();
 

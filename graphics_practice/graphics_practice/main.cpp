@@ -7,8 +7,8 @@
 #include "SOIL.h"
 #include <cstdlib>
 
-#define ROWS	20
-#define COLS	20
+#define ROWS	30
+#define COLS	30
 #define C_WIDTH	1.5
 #define C_HEIGHT 1.5
 const float timeStep = 0.1f;
@@ -117,7 +117,7 @@ void setGLOptions()
 	glEnable(GL_LINE_SMOOTH);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-
+	glPointSize(2);
 }
 
 void setLight()
