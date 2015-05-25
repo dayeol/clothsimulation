@@ -75,6 +75,9 @@
     <ClCompile Include="GLSLShader.cpp">
       <Filter>소스 파일\GLSLShader</Filter>
     </ClCompile>
+    <ClCompile Include="Cloth.cpp">
+      <Filter>소스 파일\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -131,6 +134,9 @@
     <ClInclude Include="GLSLShader.h">
       <Filter>헤더 파일\GLSLShader</Filter>
     </ClInclude>
+    <ClInclude Include="Cloth.h">
+      <Filter>헤더 파일\Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment.glsl">
@@ -143,6 +149,9 @@
       <Filter>소스 파일\shaders</Filter>
     </None>
     <None Include="vertex_selected.glsl">
+      <Filter>소스 파일\shaders</Filter>
+    </None>
+    <None Include="compute.glsl">
       <Filter>소스 파일\shaders</Filter>
     </None>
   </ItemGroup>

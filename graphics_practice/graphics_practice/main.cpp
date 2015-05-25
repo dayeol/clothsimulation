@@ -2,12 +2,19 @@
 #include "Camera.h"
 #include "Control.h"
 #include "Floor.h"
+#include "Cloth.h"
 #include "MatrixStack.h"
 #include "SOIL.h"
 #include <cstdlib>
 
+#define ROWS	30
+#define COLS	30
+const float timeStep = 1.0f / 60.0f;
+
 Control control;
 vector<vec4> vertices;
+vector<vec4> particles;
+
 vector<vec4> colors;
 vector<vec3> normals;
 vector<vec2> textures;
@@ -15,7 +22,10 @@ vector<vec2> textures;
 ObjectLoader planetObjLoader;
 ObjectLoader orbitObjLoader;
 ObjectLoader cubeObjLoader;
-GLSLShader program;
+GLSLShader program, computeShader;
+
+GLuint g_verticesBuffer[3];
+GLuint vertexBuffer;
 
 MatrixStack mvstack;
 mat4 model_view, projection;
@@ -77,11 +87,19 @@ void initShader()
 	program.AddUniform("Projection");
 	program.AddUniform("LookAt");
 
+	//Compute Program
+	computeShader.LoadFromFile(GL_COMPUTE_SHADER, "compute.glsl");
+	computeShader.CreateAndLinkProgram();
+	computeShader.AddUniform("perRow");
+	computeShader.AddUniform("dt");
 }
 void initScene()
 {
 	//바닥 격자점 만들기
 	sceneObject = new Floor(15, 15);
+
+	Cloth * cloth = new Cloth(1.5, 1.5, ROWS, COLS);
+	sceneObject->addChild(cloth);
 }
 
 void setGLOptions()
@@ -123,6 +141,8 @@ void setLight()
 		glUniform1f(program("Shininess"), material_shininess);
 	}
 	program.UnUse();
+
+
 }
 
 void init()
@@ -139,30 +159,57 @@ void init()
 	unsigned int bufferIndex = 0;
 	unsigned int bufferSize = sizeof(vec4) * (vertices.size() + colors.size());
 
-	GLuint vertexBuffer;
-	glGenBuffers(1, &vertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, bufferSize, NULL, GL_DYNAMIC_DRAW);
+	program.Use();
+	{
+		glGenBuffers(1, &vertexBuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+		glBufferData(GL_ARRAY_BUFFER, bufferSize, NULL, GL_DYNAMIC_DRAW);
 
-	glBufferSubData(GL_ARRAY_BUFFER, bufferIndex, sizeof(vec4) * vertices.size(), &vertices[0]);
-	bufferIndex += sizeof(vec4) * vertices.size();
+		glBufferSubData(GL_ARRAY_BUFFER, bufferIndex, sizeof(vec4) * vertices.size(), &vertices[0]);
+		bufferIndex += sizeof(vec4) * vertices.size();
 
-	glBufferSubData(GL_ARRAY_BUFFER, bufferIndex, sizeof(vec4) * colors.size(), &colors[0]);
-	bufferIndex += sizeof(vec4) * colors.size();
+		glBufferSubData(GL_ARRAY_BUFFER, bufferIndex, sizeof(vec4) * colors.size(), &colors[0]);
+		bufferIndex += sizeof(vec4) * colors.size();
+	}
+	program.UnUse();
 
 	/* Shader에 들어가는 Input 값들임 */
 	bufferIndex=0;
 	//Vertex Position
 	program.Use();
 	{
-		glEnableVertexAttribArray(program["vPosition"]);
 		glVertexAttribPointer(program["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
 		bufferIndex += sizeof(vec4) * vertices.size();
+		glEnableVertexAttribArray(program["vPosition"]);
 		//Vertex Color
-		glEnableVertexAttribArray(program["vColor"]);
 		glVertexAttribPointer(program["vColor"], 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
+		glEnableVertexAttribArray(program["vColor"]);
+
 	}
 	program.UnUse();
+
+	//cloth
+	const int size = particles.size() * sizeof(vec4);
+	glGenBuffers(3, g_verticesBuffer);
+	
+	//glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_verticesBuffer[0]);
+	//glBufferData(GL_SHADER_STORAGE_BUFFER, size, &particles[0], GL_DYNAMIC_DRAW);
+	
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_verticesBuffer[0]);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, size, &particles[0], GL_DYNAMIC_DRAW);
+
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_verticesBuffer[1]);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, size, &particles[0], GL_DYNAMIC_DRAW);
+
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_verticesBuffer[2]);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, size, 0, GL_DYNAMIC_DRAW);
+	
+	computeShader.Use();
+	{
+		glUniform1i(computeShader("perRow"), ROWS + 1);
+		glUniform1f(computeShader("dt"), timeStep);
+	}
+	computeShader.UnUse();
 
 	setGLOptions();
 }
@@ -213,7 +260,7 @@ void timer(int input)
 		camera.zoomIn();
 	else if (controller.zoomingOut)
 		camera.zoomOut();
-	glutTimerFunc(1, timer, 0);
+	glutTimerFunc(10, timer, 0);
 	glutPostRedisplay();
 }
 void main(int argc, char** argv)

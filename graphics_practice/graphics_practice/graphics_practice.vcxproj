@@ -66,6 +66,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Cloth.cpp" />
     <ClCompile Include="Control.cpp" />
     <ClCompile Include="Floor.cpp" />
     <ClCompile Include="GLSLShader.cpp" />
@@ -80,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Cloth.h" />
     <ClInclude Include="Control.h" />
     <ClInclude Include="Floor.h" />
     <ClInclude Include="GLSLShader.h" />
@@ -106,6 +108,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="compute.glsl" />
     <None Include="fragment.glsl" />
     <None Include="select.glsl" />
     <None Include="vertex.glsl" />

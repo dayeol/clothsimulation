@@ -23,5 +23,5 @@ void main()
 {
 
     gl_Position = Projection*LookAt*ModelView*vPosition;
-	color = vColor;
+	color = vec4(1,1,1,1);
 }
