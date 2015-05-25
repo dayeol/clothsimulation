@@ -60,6 +60,44 @@ void display()
 	glutSwapBuffers();
 }
 
+
+void initShader()
+{
+	//Render Program
+	program.LoadFromFile(GL_VERTEX_SHADER, "vertex.glsl");
+	program.LoadFromFile(GL_FRAGMENT_SHADER, "fragment.glsl");
+	program.CreateAndLinkProgram();
+	program.AddAttribute("vPosition");	
+	program.AddAttribute("vColor");
+	program.AddUniform("AmbientProduct");
+	program.AddUniform("DiffuseProduct");
+	program.AddUniform("SpecularProduct");
+	program.AddUniform("LightPosition");
+	program.AddUniform("ModelView");
+	program.AddUniform("Projection");
+	program.AddUniform("LookAt");
+
+}
+void initScene()
+{
+	//바닥 격자점 만들기
+	sceneObject = new Floor(15, 15);
+}
+
+void setGLOptions()
+{
+	//for 3D depth test
+	glEnable(GL_DEPTH_TEST);
+
+	//anti-aliasing
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_LINE_SMOOTH);
+	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+
+
+}
+
 void setLight()
 {
 	vec4 light_position = vec4(0, 0, 0, 1.0);
@@ -89,15 +127,10 @@ void setLight()
 
 void init()
 {
-	program.LoadFromFile(GL_VERTEX_SHADER, "vertex.glsl");
-	program.LoadFromFile(GL_FRAGMENT_SHADER, "fragment.glsl");
-	program.CreateAndLinkProgram();
-
 	srand(time(NULL));
-	
-	//바닥 격자점 만들기
-	sceneObject = new Floor(15, 15);
+	initScene();
 
+	initShader();
 	//GPU로 보낼 데이터 버퍼 세팅
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
@@ -119,26 +152,19 @@ void init()
 
 	/* Shader에 들어가는 Input 값들임 */
 	bufferIndex=0;
-	//Vertex Position (vPosition)
-	program.AddAttribute("vPosition");
-	glEnableVertexAttribArray(program["vPosition"]);
-	glVertexAttribPointer(program["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
-	bufferIndex += sizeof(vec4) * vertices.size();
+	//Vertex Position
+	program.Use();
+	{
+		glEnableVertexAttribArray(program["vPosition"]);
+		glVertexAttribPointer(program["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
+		bufferIndex += sizeof(vec4) * vertices.size();
+		//Vertex Color
+		glEnableVertexAttribArray(program["vColor"]);
+		glVertexAttribPointer(program["vColor"], 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
+	}
+	program.UnUse();
 
-	//Vertex Color (vColor)
-	program.AddAttribute("vColor");
-	glEnableVertexAttribArray(program["vColor"]);
-	glVertexAttribPointer(program["vColor"], 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
-
-	program.AddUniform("AmbientProduct");
-	program.AddUniform("DiffuseProduct");
-	program.AddUniform("SpecularProduct");
-	program.AddUniform("LightPosition");
-	program.AddUniform("ModelView");
-	program.AddUniform("Projection");
-	program.AddUniform("LookAt");
-
-	glEnable(GL_DEPTH_TEST);
+	setGLOptions();
 }
 
 void keyDown(unsigned char key, int x, int y)
@@ -166,7 +192,6 @@ void mouse(GLint button, GLint action, GLint x, GLint y)
 	controller.mouse(button, action, x, y);
 
 }
-
 void mouseMove(int x, int y)
 {
 	controller.mouseMove(x, y);
