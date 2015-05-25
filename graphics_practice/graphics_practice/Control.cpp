@@ -143,8 +143,15 @@ void Control::mouseMove(int x, int y)
 	if (isDragging)
 	{
 		camera._3dW = original3dW + (x - dragOriginX);
-		camera._3dT = original3dT + (y - dragOriginY);
-
+		camera._3dT = original3dT + (dragOriginY - y);
+		if (camera._3dT >= 180)
+		{
+			camera._3dT = 180;
+		}
+		if (camera._3dT <= 1)
+		{
+			camera._3dT = 1;
+		}
 		camera.recalculate3D();
 	}
 }

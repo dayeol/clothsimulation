@@ -86,7 +86,7 @@ void Camera::move(direction to)
 			y += moveAmount;
 		else
 		{
-			_3ddist -= moveAmount * 100;
+			_3ddist -= moveAmount * 10;
 			recalculate3D();
 		}
 		break;
@@ -95,7 +95,7 @@ void Camera::move(direction to)
 			y -= moveAmount;
 		else
 		{
-			_3ddist += moveAmount * 100;
+			_3ddist += moveAmount * 10;
 			recalculate3D();
 		}
 		break;
