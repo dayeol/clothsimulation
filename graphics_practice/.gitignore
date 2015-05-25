@@ -1,0 +1,8 @@
+ipch
+
+*.sdf
+*.opensdf
+Debug
+graphics_practice/Debug
+*.suo
+graphics_practice.suo

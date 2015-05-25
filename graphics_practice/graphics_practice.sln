@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "graphics_practice", "graphics_practice\graphics_practice.vcxproj", "{9ED90131-2F92-4BFC-AD64-3D2CCC983F5A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9ED90131-2F92-4BFC-AD64-3D2CCC983F5A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9ED90131-2F92-4BFC-AD64-3D2CCC983F5A}.Debug|Win32.Build.0 = Debug|Win32
+		{9ED90131-2F92-4BFC-AD64-3D2CCC983F5A}.Release|Win32.ActiveCfg = Release|Win32
+		{9ED90131-2F92-4BFC-AD64-3D2CCC983F5A}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
