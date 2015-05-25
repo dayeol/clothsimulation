@@ -52,9 +52,6 @@ void main() {
 	//gravity
 	force += GRAVITY * mass + vel*-0.0125f;
 
-
-
-
 	//structural force
 	int rightIndex;
 	rightIndex = vertexIndex + 1;
