@@ -1,8 +1,5 @@
 #include "Cloth.h"
-<<<<<<< HEAD
-=======
 #include "main.h"
->>>>>>> constant
 
 Cloth::Cloth(float _x, float _y, int _numX, int _numY)
 {

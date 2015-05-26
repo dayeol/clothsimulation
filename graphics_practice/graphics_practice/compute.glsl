@@ -85,12 +85,12 @@ void main() {
 	i2 = vertexIndex - 1 - perRow;
 	i3 = vertexIndex - 1 + perRow;
 	i4 = vertexIndex + 1 + perRow;
-	if (rightIndex % perRow > col && i1 > 0)
+	if (rightIndex % perRow > col && i1 >= 0)
 	{
 		vec4 shear1 = vertexCurrBuffer[i1];
 		force += springForce(previous, current, shear1, shearRest);
 	}
-	if (leftIndex % perRow < col && i2 > 0)
+	if (leftIndex % perRow < col && i2 >= 0)
 	{
 		vec4 shear2 = vertexCurrBuffer[i2];
 		force += springForce(previous, current, shear2, shearRest);
