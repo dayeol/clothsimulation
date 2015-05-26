@@ -14,6 +14,9 @@
 
 using namespace std;
 
+#define ROWS	30
+#define COLS	30
+
 #define RGB(r,g,b)	color4( (float)r/255, (float)g/255, (float)b/255, 1.0 )
 #define RGBA(r,g,b,a)	color4( (float)r/255, (float)g/255, (float)b/255, (float)a/255 )
 #define BUFFER_OFFSET(bytes) ((GLvoid*) (bytes))

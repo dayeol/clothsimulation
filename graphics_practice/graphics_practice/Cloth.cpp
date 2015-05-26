@@ -1,4 +1,8 @@
 #include "Cloth.h"
+<<<<<<< HEAD
+=======
+#include "main.h"
+>>>>>>> constant
 
 Cloth::Cloth(float _x, float _y, int _numX, int _numY)
 {
@@ -78,7 +82,7 @@ void Cloth::draw()
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, g_verticesBuffer[currentOutput]);
 
 		// Process all vertices.
-		glDispatchCompute(1, 1, 1);
+		glDispatchCompute(ROWS, ROWS , 1);
 
 		// Make sure, all vertices and normals are written.
 		glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);

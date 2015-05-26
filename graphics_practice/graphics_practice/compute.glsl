@@ -8,7 +8,7 @@ uniform float shearRest;
 #define MASS 0.05
 
 #define GRAVITY vec4(0.0,0.0,-0.02, 0.0)
-#define STIFFNESS 2.0
+#define STIFFNESS 3.0
 
 layout(std430, binding = 1) buffer VertexPrevious{
 	vec4 vertexPrevBuffer[];
@@ -30,7 +30,7 @@ vec4 springForce(vec4 prev, vec4 a, vec4 b, float rest)
 }
 
 void main() {
-	int vertexIndex = int(gl_GlobalInvocationID.x);
+	int vertexIndex = int(gl_LocalInvocationIndex);
 	vec4 current = vertexCurrBuffer[vertexIndex];
 	vec4 previous = vertexPrevBuffer[vertexIndex];
 	int col = vertexIndex % perRow;
@@ -50,7 +50,7 @@ void main() {
 	}
 
 	//gravity
-	force += GRAVITY * mass + vel*-0.0125f;
+	force += GRAVITY * mass + vel * (-0.00500);
 
 	//structural force
 	int rightIndex;
