@@ -8,8 +8,8 @@
 #include <cstdlib>
 
 
-#define C_WIDTH	1.0
-#define C_HEIGHT 1.0
+#define C_WIDTH 1.5
+#define C_HEIGHT 1.5
 const float timeStep = 0.1f;
 
 Control control;  

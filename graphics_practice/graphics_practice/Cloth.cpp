@@ -29,7 +29,6 @@ Cloth::Cloth(float _x, float _y, int _numX, int _numY)
 		{
 			int offset = (numX + 1) * j;
 
-			cout << i % 2 << endl;
 			
 			if ((i % 2 == 0) && (j % 2 == 0) || (i % 2 == 1) && (j % 2 == 1))
 			{
