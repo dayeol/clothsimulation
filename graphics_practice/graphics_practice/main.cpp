@@ -20,6 +20,7 @@ vector<GLushort> indices;
 
 vector<vec4> colors;
 vector<vec3> normals;
+vector<vec3> particleNormals;
 vector<vec2> textures;
 
 ObjectLoader planetObjLoader;
@@ -28,6 +29,7 @@ ObjectLoader cubeObjLoader;
 GLSLShader program, computeShader;
 
 GLuint g_verticesBuffer[3];
+GLuint g_normalsBuffer;
 GLuint vertexBuffer;
 
 MatrixStack mvstack;
@@ -197,7 +199,6 @@ void init()
 		//Vertex Color
 		glVertexAttribPointer(program["vColor"], 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
 		glEnableVertexAttribArray(program["vColor"]);
-
 	}
 	program.UnUse();
 
@@ -216,6 +217,13 @@ void init()
 
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_verticesBuffer[2]);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, size, 0, GL_DYNAMIC_DRAW);
+
+	//cloth normal
+	const int normalSize = particleNormals.size() * sizeof(vec3);
+	glGenBuffers(1, &g_normalsBuffer);
+
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_normalsBuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, normalSize, &particleNormals[0], GL_DYNAMIC_DRAW);
 	
 	computeShader.Use();
 	{

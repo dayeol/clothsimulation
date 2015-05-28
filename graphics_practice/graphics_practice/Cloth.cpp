@@ -18,6 +18,7 @@ Cloth::Cloth(float _x, float _y, int _numX, int _numY)
 				((-x / 2)*i + (x / 2)*(numX - i)) / numX, 
 				1,
 				1.0));
+			particleNormals.push_back(vec3(0.0, 0.0, 1.0));
 		}
 	}
 
@@ -28,8 +29,6 @@ Cloth::Cloth(float _x, float _y, int _numX, int _numY)
 		{
 			int offset = (numX + 1) * j;
 
-			cout << i % 2 << endl;
-			
 			if ((i % 2 == 0) && (j % 2 == 0) || (i % 2 == 1) && (j % 2 == 1))
 			{
 				//upper
@@ -76,6 +75,7 @@ void Cloth::draw()
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, g_verticesBuffer[previousInput]);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, g_verticesBuffer[currentInput]);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, g_verticesBuffer[currentOutput]);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, g_normalsBuffer);
 
 		// Process all vertices.
 		glDispatchCompute(1, 1, 1);
@@ -86,12 +86,19 @@ void Cloth::draw()
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, 0);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, 0);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, 0);
 	}
 	computeShader.UnUse();
 
 
 	program.Use();
 	{
+		// Normal Input
+		glBindBuffer(GL_ARRAY_BUFFER, g_normalsBuffer);
+		glVertexPointer(3, GL_FLOAT, 0, 0);
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexAttribPointer(program["vNormal"], 3, GL_FLOAT, GL_FALSE, 0, 0);
+
 		// Draw Lines
 		glBindBuffer(GL_ARRAY_BUFFER, g_verticesBuffer[currentOutput]);
 		glVertexPointer(4, GL_FLOAT, 0, 0);

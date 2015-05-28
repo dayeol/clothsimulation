@@ -21,6 +21,7 @@ Floor::Floor(float _x, float _y)
 			colors.push_back(vec4(1, 1, 1, 1));
 			colors.push_back(vec4(1, 1, 1, 1));
 			colors.push_back(vec4(1, 1, 1, 1));
+
 			size++;
 		}
 	}

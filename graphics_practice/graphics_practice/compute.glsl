@@ -19,6 +19,10 @@ layout(std430, binding = 2) buffer VertexCurrent{
 layout(std430, binding = 3) buffer VertexOutput{
 	vec4 vertexOutBuffer[];
 };
+layout(std430, binding = 4) buffer Normal{
+	vec3 normalBuffer[];
+};
+
 
 layout(local_size_x = 1024) in;
 
@@ -29,10 +33,20 @@ vec4 springForce(vec4 prev, vec4 a, vec4 b, float rest)
 	return 0.5* deltaP*(rest - d) / d *STIFFNESS;
 }
 
+vec4 windForce(vec4 normal, vec4 wind)
+{
+	vec4 n = normal;
+	vec4 w = wind;
+	return normalize(dot(n, w) * wind); 
+} 
+
 void main() {
 	int vertexIndex = int(gl_GlobalInvocationID.x);
 	vec4 current = vertexCurrBuffer[vertexIndex];
 	vec4 previous = vertexPrevBuffer[vertexIndex];
+	vec4 currentNormal = vec4(normalBuffer[vertexIndex], 1);
+	vec4 wind = vec4(-0.1, 0, 0, 1);
+
 	int col = vertexIndex % perRow;
 	int colmax = perRow; //column 마지막 번호
 	int row = vertexIndex / perRow;
@@ -133,6 +147,7 @@ void main() {
 		force += springForce(previous, current, left2, structRest * 2);
 	}
 
+	force += windForce(currentNormal, wind);
 
 	//verlet integration
 	vec4 acceleration;
