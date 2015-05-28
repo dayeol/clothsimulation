@@ -10,6 +10,7 @@ uniform float shearRest;
 #define STIFFNESS 5
 #define DAMPING	-0.5
 #define DEFAULT_DAMPING -0.0255
+#define WIND vec4(0.0, 0.0, 1.0, 1.0)
 
 layout(std430, binding = 1) buffer VertexPrevious{
 	vec4 vertexPrevBuffer[];
@@ -37,11 +38,10 @@ vec4 springForce(vec4 vel, vec4 velNeigh, vec4 a, vec4 b, float rest)
 	return (stiff + damp) * normalize(deltaP);
 }
 
-vec4 windForce(vec4 normal, vec4 wind)
+vec4 windForce(vec4 normal)
 {
 	vec4 n = normal;
-	vec4 w = wind;
-	return normalize(dot(n, w) * wind); 
+	return normalize(dot(n, WIND) * WIND); 
 } 
 
 void main() {
@@ -49,8 +49,7 @@ void main() {
 	vec4 current = vertexCurrBuffer[vertexIndex];
 	vec4 previous = vertexPrevBuffer[vertexIndex];
 	vec4 currentNormal = vec4(normalBuffer[vertexIndex], 1);
-	vec4 wind = vec4(-0.1, 0, 0, 1);
-
+	
 	int col = vertexIndex % perRow;
 	int colmax = perRow; //column 마지막 번호
 	int row = vertexIndex / perRow;
@@ -164,7 +163,7 @@ void main() {
 		force += springForce(vel, velNeigh, current, left2, structRest * 2);
 	}
 
-	force += windForce(currentNormal, wind);
+	force += 0.0025 * windForce(currentNormal);
 
 	//verlet integration
 	vec4 acceleration;
