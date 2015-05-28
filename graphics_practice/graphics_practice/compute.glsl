@@ -208,8 +208,8 @@ void main() {
 
 	normalBuffer[vertexIndex] = normalize(normal);
 
-	vec2 rnd = vec2(0.0000008, 0.0000012);
-	force += 0.02 * windForce(normalize(vec4(normal, 1))) + vel * DEFAULT_DAMPING;
+	float rnd = rand(vec2(1.3, 12)) * 0.04;
+	force += rnd * windForce(normalize(vec4(normal, 1))) + vel * DEFAULT_DAMPING;
 
 	//verlet integration
 	vec4 acceleration;
