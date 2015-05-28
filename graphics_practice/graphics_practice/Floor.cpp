@@ -39,15 +39,15 @@ void Floor::draw()
 {
 	mvstack.push(model_view);
 
-	program.Use();
+	floorShader.Use();
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-		glVertexAttribPointer(program["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, 0);
-		glUniformMatrix4fv(program("ModelView"), 1, GL_TRUE, model_view);
+		glVertexAttribPointer(floorShader["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, 0);
+		glUniformMatrix4fv(floorShader("ModelView"), 1, GL_TRUE, model_view);
 		for (int i = 0; i < size; i++)
 			glDrawArrays(GL_LINE_LOOP, i * 4, 4);
 	}
-	program.UnUse();
+	floorShader.UnUse();
 
 	model_view = mvstack.pop();
 }

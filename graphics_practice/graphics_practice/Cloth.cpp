@@ -92,28 +92,23 @@ void Cloth::draw()
 	}
 	computeShader.UnUse();
 
-
 	program.Use();
 	{
+		glUniformMatrix4fv(program("ModelView"), 1, GL_TRUE, model_view);
 		// Normal Input
 		glBindBuffer(GL_ARRAY_BUFFER, g_normalsBuffer);
-		glVertexPointer(3, GL_FLOAT, 0, 0);
-		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexAttribPointer(program["vNormal"], 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		// Draw Lines
 		glBindBuffer(GL_ARRAY_BUFFER, g_verticesBuffer[currentOutput]);
-		glVertexPointer(4, GL_FLOAT, 0, 0);
-		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexAttribPointer(program["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, 0);
 		for (int i = 0; i < numTriangle; i++)
-			glDrawElements(GL_LINE_LOOP, 3, GL_UNSIGNED_SHORT, &(indices[i * 3]));
+			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, &(indices[i * 3]));
 
 		// Draw Points
-		glUniformMatrix4fv(program("ModelView"), 1, GL_TRUE, model_view);
-		glBindBuffer(GL_ARRAY_BUFFER, g_verticesBuffer[currentOutput]);
-		glVertexAttribPointer(program["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, 0);
-		glDrawArrays(GL_POINTS, 0, (numX + 1)*(numY + 1));
+		//glBindBuffer(GL_ARRAY_BUFFER, g_verticesBuffer[currentOutput]);
+		//glVertexAttribPointer(program["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, 0);
+		//glDrawArrays(GL_POINTS, 0, (numX + 1)*(numY + 1));
 	}
 	program.UnUse();
 

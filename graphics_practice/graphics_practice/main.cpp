@@ -25,7 +25,7 @@ vector<vec2> textures;
 ObjectLoader planetObjLoader;
 ObjectLoader orbitObjLoader;
 ObjectLoader cubeObjLoader;
-GLSLShader program, computeShader;
+GLSLShader program, computeShader, floorShader;
 
 GLuint g_verticesBuffer[3];
 GLuint g_normalsBuffer;
@@ -49,17 +49,53 @@ void idle()
 	glutPostRedisplay();
 }
 
+void setLight()
+{
+	vec4 light_position = vec4(0, 0, 5.0, 1.0);
+	vec4 light_ambient(0.7, 0.7, 0.7, 7.0);
+	vec4 light_diffuse(0.8, 0.8, 0.8, 1.0);
+	vec4 light_specular(0.35, 0.35, 0.35, 1.0);
+
+	vec4 material_ambient(1.0, 1.0, 1.0, 1.0);
+	vec4 material_diffuse(1.0, 1.0, 1.0, 1.0);
+	vec4 material_specular(1.0, 1.0, 1.0, 1.0);
+	float material_shininess = 10;
+
+	vec4 ambient_product = light_ambient * material_ambient;
+	vec4 diffuse_product = light_diffuse * material_diffuse;
+	vec4 specular_product = light_specular * material_specular;
+
+	program.Use();
+	{
+		glUniform4fv(program("AmbientProduct"), 1, ambient_product);
+		glUniform4fv(program("DiffuseProduct"), 1, diffuse_product);
+		glUniform4fv(program("SpecularProduct"), 1, specular_product);
+		glUniform4fv(program("LightPosition"), 1, light_position);
+		glUniform1f(program("Shininess"), material_shininess);
+	}
+	program.UnUse();
+}
+
+
 void drawScene()
 {
 	projection = camera.projection();
 	look_at = camera.lookAt();
-
+	
 	program.Use();
 	{
 		glUniformMatrix4fv(program("Projection"), 1, GL_TRUE, projection);
 		glUniformMatrix4fv(program("LookAtMat"), 1, GL_TRUE, look_at);
+		setLight();
 	}
 	program.UnUse();
+
+	floorShader.Use();
+	{
+		glUniformMatrix4fv(floorShader("Projection"), 1, GL_TRUE, projection);
+		glUniformMatrix4fv(floorShader("LookAtMat"), 1, GL_TRUE, look_at);
+	}
+	floorShader.UnUse();
 
 	sceneObject->traverse();
 
@@ -98,6 +134,16 @@ void initShader()
 	computeShader.AddUniform("dt");
 	computeShader.AddUniform("structRest");//rest distance of structural spring
 	computeShader.AddUniform("shearRest");//rest distance of shear spring
+
+	//Floor Program
+	floorShader.LoadFromFile(GL_VERTEX_SHADER, "floorVert.glsl");
+	floorShader.LoadFromFile(GL_FRAGMENT_SHADER, "floorFrag.glsl");
+	floorShader.CreateAndLinkProgram();
+	floorShader.AddAttribute("vPosition");
+	floorShader.AddAttribute("vColor");
+	floorShader.AddUniform("ModelView");
+	floorShader.AddUniform("Projection");
+	floorShader.AddUniform("LookAt");
 }
 void initScene()
 {
@@ -122,35 +168,6 @@ void setGLOptions()
 	glPointSize(2);
 }
 
-void setLight()
-{
-	vec4 light_position = vec4(0, 0, 0, 1.0);
-	vec4 light_ambient(0.1, 0.1, 0.1, 1.0);
-	vec4 light_diffuse(0.8, 0.8, 0.8, 1.0);
-	vec4 light_specular(0.35, 0.35, 0.35, 1.0);
-
-	vec4 material_ambient(1.0, 1.0, 1.0, 1.0);
-	vec4 material_diffuse(1.0, 1.0, 1.0, 1.0);
-	vec4 material_specular(1.0, 1.0, 1.0, 1.0);
-	float material_shininess = 10;
-
-	vec4 ambient_product = light_ambient * material_ambient;
-	vec4 diffuse_product = light_diffuse * material_diffuse;
-	vec4 specular_product = light_specular * material_specular;
-
-	program.Use();
-	{
-		glUniform4fv(program("AmbientProduct"), 1, ambient_product);
-		glUniform4fv(program("DiffuseProduct"), 1, diffuse_product);
-		glUniform4fv(program("SpecularProduct"), 1, specular_product);
-		glUniform4fv(program("LightPosition"), 1, light_position);
-		glUniform1f(program("Shininess"), material_shininess);
-	}
-	program.UnUse();
-
-
-}
-
 void init()
 {
 	srand(time(NULL));
@@ -173,7 +190,7 @@ void init()
 	}
 	program.UnUse();*/
 
-	program.Use();
+	floorShader.Use();
 	{
 		glGenBuffers(1, &vertexBuffer);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -185,21 +202,21 @@ void init()
 		glBufferSubData(GL_ARRAY_BUFFER, bufferIndex, sizeof(vec4) * colors.size(), &colors[0]);
 		bufferIndex += sizeof(vec4) * colors.size();
 	}
-	program.UnUse();
+	floorShader.UnUse();
 
 	/* Shader에 들어가는 Input 값들임 */
 	bufferIndex=0;
 	//Vertex Position
-	program.Use();
+	floorShader.Use();
 	{
-		glVertexAttribPointer(program["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
+		glVertexAttribPointer(floorShader["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
 		bufferIndex += sizeof(vec4) * vertices.size();
-		glEnableVertexAttribArray(program["vPosition"]);
+		glEnableVertexAttribArray(floorShader["vPosition"]);
 		//Vertex Color
-		glVertexAttribPointer(program["vColor"], 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
-		glEnableVertexAttribArray(program["vColor"]);
+		glVertexAttribPointer(floorShader["vColor"], 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
+		glEnableVertexAttribArray(floorShader["vColor"]);
 	}
-	program.UnUse();
+	floorShader.UnUse();
 
 	//cloth
 	const int size = particles.size() * sizeof(vec4);

@@ -23,7 +23,7 @@ using namespace std;
 
 extern class Object* sceneObject;
 
-extern GLSLShader program, computeShader;
+extern GLSLShader program, computeShader, floorShader;
 
 extern MatrixStack mvstack;
 extern mat4 model_view, look_at;

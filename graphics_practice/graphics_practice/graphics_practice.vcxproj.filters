@@ -154,5 +154,11 @@
     <None Include="compute.glsl">
       <Filter>소스 파일\shaders</Filter>
     </None>
+    <None Include="floorFrag.glsl">
+      <Filter>소스 파일\shaders</Filter>
+    </None>
+    <None Include="floorVert.glsl">
+      <Filter>소스 파일\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
