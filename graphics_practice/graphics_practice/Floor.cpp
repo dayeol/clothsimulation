@@ -12,15 +12,15 @@ Floor::Floor(float _x, float _y)
 	{
 		for (int j = -y; j <= y; j++)
 		{
-			vertices.push_back(vec4(i * 0.1 - 0.05, j * 0.1 - 0.05, -1, 1));
-			vertices.push_back(vec4(i * 0.1 - 0.05, j * 0.1 + 0.05, -1, 1));
-			vertices.push_back(vec4(i * 0.1 + 0.05, j * 0.1 + 0.05, -1, 1));
-			vertices.push_back(vec4(i * 0.1 + 0.05, j * 0.1 - 0.05, -1, 1));
+			vertices.push_back(vec4(i  - 0.5, j  - 0.5, -1, 1));
+			vertices.push_back(vec4(i  - 0.5, j  + 0.5, -1, 1));
+			vertices.push_back(vec4(i  + 0.5, j  + 0.5, -1, 1));
+			vertices.push_back(vec4(i  + 0.5, j  - 0.5, -1, 1));
 
-			colors.push_back(vec4(1, 1, 1, 1));
-			colors.push_back(vec4(1, 1, 1, 1));
-			colors.push_back(vec4(1, 1, 1, 1));
-			colors.push_back(vec4(1, 1, 1, 1));
+			colors.push_back(vec4(1, 0.5, 1, 1));
+			colors.push_back(vec4(1, 0.5, 1, 1));
+			colors.push_back(vec4(1, 0.5, 1, 1));
+			colors.push_back(vec4(1, 0.5, 1, 1));
 
 			size++;
 		}

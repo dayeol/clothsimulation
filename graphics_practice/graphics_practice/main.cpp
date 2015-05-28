@@ -7,9 +7,8 @@
 #include "SOIL.h"
 #include <cstdlib>
 
-#define ROWS	30
-#define COLS	30
-#define C_WIDTH	1.5
+
+#define C_WIDTH 1.5
 #define C_HEIGHT 1.5
 const float timeStep = 0.1f;
 
@@ -283,7 +282,7 @@ void timer(int input)
 		camera.zoomIn();
 	else if (controller.zoomingOut)
 		camera.zoomOut();
-	glutTimerFunc(10, timer, 0);
+	glutTimerFunc(1, timer, 0);
 	glutPostRedisplay();
 }
 void main(int argc, char** argv)

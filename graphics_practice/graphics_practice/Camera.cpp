@@ -18,8 +18,8 @@ Camera::Camera()
 	_3dy = 0;
 	_3dz = 0;
 	_3ddist = 5.0f;
-	_3dT = 80;
-	_3dW = 90;
+	_3dT = 92;
+	_3dW = 45;
 	recalculate3D();
 }
 
@@ -106,8 +106,8 @@ void Camera::move(direction to)
 		}
 		else
 		{
-			_3dx -= moveAmount * (right.x);
-			_3dy -= moveAmount * (right.y);
+			_3dx -= moveAmount * (right.x) * 0.1;
+			_3dy -= moveAmount * (right.y) * 0.1;
 			//_3dz -= right.z * moveAmount * 0.1;
 			recalculate3D();
 		}
@@ -119,8 +119,8 @@ void Camera::move(direction to)
 		}
 		else
 		{
-			_3dx += moveAmount * (right.x);
-			_3dy += moveAmount * (right.y);
+			_3dx += moveAmount * (right.x) * 0.1;
+			_3dy += moveAmount * (right.y) * 0.1;
 			//_3dz += right.z * moveAmount * 0.1;
 			recalculate3D();
 		}
