@@ -1,5 +1,6 @@
 #include "Cloth.h"
 #include "main.h"
+#include <ctime>
 
 Cloth::Cloth(float _x, float _y, int _numX, int _numY)
 {
@@ -19,7 +20,7 @@ Cloth::Cloth(float _x, float _y, int _numX, int _numY)
 				((-x / 2)*i + (x / 2)*(numX - i)) / numX, 
 				1,
 				1.0));
-			particleNormals.push_back(vec3(0.0, 0.0, 1.0));
+			particleNormals.push_back(vec3(0.0, 1.0, 1.0));
 		}
 	}
 

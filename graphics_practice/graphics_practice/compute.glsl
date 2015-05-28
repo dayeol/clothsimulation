@@ -10,7 +10,7 @@ uniform float shearRest;
 #define STIFFNESS 5
 #define DAMPING	-0.5
 #define DEFAULT_DAMPING -0.0255
-#define WIND vec4(0.0, 0.0, 1.0, 1.0)
+#define WIND vec4(1.0, 0.0, 0.0, 0.0)
 
 layout(std430, binding = 1) buffer VertexPrevious{
 	vec4 vertexPrevBuffer[];
@@ -38,10 +38,16 @@ vec4 springForce(vec4 vel, vec4 velNeigh, vec4 a, vec4 b, float rest)
 	return (stiff + damp) * normalize(deltaP);
 }
 
+float rand(vec2 n)
+{
+  return 0.5 + 0.5 * 
+     fract(sin(dot(n.xy, vec2(12.9898, 78.233)))* 43758.5453);
+}
+
 vec4 windForce(vec4 normal)
 {
 	vec4 n = normal;
-	return normalize(dot(n, WIND) * WIND); 
+	return dot(n, WIND) * WIND;
 } 
 
 void main() {
@@ -163,7 +169,47 @@ void main() {
 		force += springForce(vel, velNeigh, current, left2, structRest * 2);
 	}
 
-	force += 0.0025 * windForce(currentNormal);
+
+	// Calculate Normal
+	vec3 normal = vec3(0.0, 0.0, 0.0);
+	vec3 tangent;
+	vec3 bitangent;
+
+	if(col < colmax - 1)
+	{
+		tangent = normalize((vertexCurrBuffer[vertexIndex + 1] - vertexCurrBuffer[vertexIndex]).xyz);
+
+		if(row < rowmax - 1)
+		{
+			bitangent = normalize((vertexCurrBuffer[vertexIndex + rowmax] - vertexCurrBuffer[vertexIndex]).xyz);
+			normal += normalize(cross(bitangent, tangent));	
+		}
+		if(row > 0)
+		{
+			bitangent = normalize((vertexCurrBuffer[vertexIndex] - vertexCurrBuffer[vertexIndex - rowmax]).xyz);
+			normal += normalize(cross(bitangent, tangent));	
+		}
+	}
+	if(col > 0)
+	{
+		tangent = normalize((vertexCurrBuffer[vertexIndex] - vertexCurrBuffer[vertexIndex - 1]).xyz);
+
+		if(row < rowmax - 1)
+		{
+			bitangent = normalize((vertexCurrBuffer[vertexIndex + rowmax] - vertexCurrBuffer[vertexIndex]).xyz);
+			normal += normalize(cross(bitangent, tangent));	
+		}
+		if(row > 0)
+		{
+			bitangent = normalize((vertexCurrBuffer[vertexIndex] - vertexCurrBuffer[vertexIndex - rowmax]).xyz);
+			normal += normalize(cross(bitangent, tangent));	
+		}
+	}
+
+	normalBuffer[vertexIndex] = normalize(normal);
+
+	vec2 rnd = vec2(0.0000008, 0.0000012);
+	force += 0.02 * windForce(normalize(vec4(normal, 1))) + vel * DEFAULT_DAMPING;
 
 	//verlet integration
 	vec4 acceleration;
