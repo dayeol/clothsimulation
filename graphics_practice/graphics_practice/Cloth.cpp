@@ -1,5 +1,6 @@
 #include "Cloth.h"
 #include "main.h"
+#include "SOIL.h"
 #include <ctime>
 
 Cloth::Cloth(float _x, float _y, int _numX, int _numY)
@@ -9,6 +10,13 @@ Cloth::Cloth(float _x, float _y, int _numX, int _numY)
 	numX = _numX;
 	numY = _numY;
 	numTriangle = 0;
+	texture = SOIL_load_OGL_texture
+	(
+		"towel2.jpg",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_TEXTURE_REPEATS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+	);
 	
 	for (int j = 0; j <= numY; j++)
 	{
@@ -20,7 +28,8 @@ Cloth::Cloth(float _x, float _y, int _numX, int _numY)
 				((-x / 2)*i + (x / 2)*(numX - i)) / numX, 
 				1,
 				1.0));
-			particleNormals.push_back(vec3(0.0, 1.0, 1.0));
+			particleNormals.push_back(vec3(0.0, 0.0, 1.0));
+			textures.push_back(vec2((float)i/numX, (float)j/numY));
 		}
 	}
 
@@ -91,9 +100,14 @@ void Cloth::draw()
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, 0);
 	}
 	computeShader.UnUse();
-
+	
 	program.Use();
 	{
+		glActiveTexture(GL_TEXTURE0);
+		glEnable(GL_TEXTURE_2D);
+		glUniform1i(program["TextureColor"], 0);
+		glBindTexture(GL_TEXTURE_2D, texture);
+
 		glUniformMatrix4fv(program("ModelView"), 1, GL_TRUE, model_view);
 		// Normal Input
 		glBindBuffer(GL_ARRAY_BUFFER, g_normalsBuffer);
@@ -104,6 +118,10 @@ void Cloth::draw()
 		glVertexAttribPointer(program["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, 0);
 		for (int i = 0; i < numTriangle; i++)
 			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, &(indices[i * 3]));
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_TEXTURE_2D);
 
 		// Draw Points
 		//glBindBuffer(GL_ARRAY_BUFFER, g_verticesBuffer[currentOutput]);

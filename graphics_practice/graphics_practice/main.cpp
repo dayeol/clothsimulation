@@ -30,6 +30,7 @@ GLSLShader program, computeShader, floorShader;
 GLuint g_verticesBuffer[3];
 GLuint g_normalsBuffer;
 GLuint vertexBuffer;
+GLuint vertexBuffer2;
 
 MatrixStack mvstack;
 mat4 model_view, projection;
@@ -52,7 +53,7 @@ void idle()
 void setLight()
 {
 	vec4 light_position = vec4(0, 0, 5.0, 1.0);
-	vec4 light_ambient(0.7, 0.7, 0.7, 7.0);
+	vec4 light_ambient(0.7, 0.7, 0.7, 1.0);
 	vec4 light_diffuse(0.8, 0.8, 0.8, 1.0);
 	vec4 light_specular(0.35, 0.35, 0.35, 1.0);
 
@@ -86,7 +87,7 @@ void drawScene()
 	{
 		glUniformMatrix4fv(program("Projection"), 1, GL_TRUE, projection);
 		glUniformMatrix4fv(program("LookAtMat"), 1, GL_TRUE, look_at);
-		setLight();
+		//setLight();
 	}
 	program.UnUse();
 
@@ -118,14 +119,17 @@ void initShader()
 	program.LoadFromFile(GL_FRAGMENT_SHADER, "fragment.glsl");
 	program.CreateAndLinkProgram();
 	program.AddAttribute("vPosition");	
-	program.AddAttribute("vColor");
-	program.AddUniform("AmbientProduct");
-	program.AddUniform("DiffuseProduct");
-	program.AddUniform("SpecularProduct");
-	program.AddUniform("LightPosition");
+	program.AddAttribute("vNormal");
+	program.AddAttribute("vTexCoord");
 	program.AddUniform("ModelView");
 	program.AddUniform("Projection");
 	program.AddUniform("LookAt");
+	program.AddUniform("TextureColor");
+	//program.AddUniform("AmbientProduct");
+	//program.AddUniform("DiffuseProduct");
+	//program.AddUniform("SpecularProduct");
+	//program.AddUniform("LightPosition");
+	//program.AddUniform("Shininess");
 
 	//Compute Program
 	computeShader.LoadFromFile(GL_COMPUTE_SHADER, "compute.glsl");
@@ -180,15 +184,21 @@ void init()
 	glBindVertexArray(vao);
 
 	unsigned int bufferIndex = 0;
-	unsigned int bufferSize = sizeof(vec4) * (vertices.size() + colors.size());
+	unsigned int bufferSize = sizeof(vec2) * textures.size();
 
-	/*program.Use();
+	program.Use();
 	{
-		glGenBuffers(1, &elemBuffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elemBuffer);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size(), &indices[0], GL_STATIC_DRAW);
+		glGenBuffers(1, &vertexBuffer2);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer2);
+		glBufferData(GL_ARRAY_BUFFER, bufferSize, &textures[0], GL_DYNAMIC_DRAW);
+
+		glEnableVertexAttribArray(program["vTexCoord"]);
+		glVertexAttribPointer(program["vTexCoord"], 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
 	}
-	program.UnUse();*/
+	program.UnUse();
+
+	bufferIndex = 0;
+	bufferSize = sizeof(vec4) * (vertices.size() + colors.size());
 
 	floorShader.Use();
 	{
@@ -240,7 +250,7 @@ void init()
 
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_normalsBuffer);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, normalSize, &particleNormals[0], GL_DYNAMIC_DRAW);
-	
+
 	computeShader.Use();
 	{
 		glUniform1i(computeShader("perRow"), ROWS + 1);
