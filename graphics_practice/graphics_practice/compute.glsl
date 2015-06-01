@@ -22,7 +22,7 @@ layout(std430, binding = 3) buffer VertexOutput{
 	vec4 vertexOutBuffer[];
 };
 layout(std430, binding = 4) buffer Normal{
-	vec3 normalBuffer[];
+	vec4 normalBuffer[];
 };
 
 
@@ -54,7 +54,7 @@ void main() {
 	int vertexIndex = int(gl_WorkGroupID*perRow + gl_LocalInvocationIndex);
 	vec4 current = vertexCurrBuffer[vertexIndex];
 	vec4 previous = vertexPrevBuffer[vertexIndex];
-	vec4 currentNormal = vec4(normalBuffer[vertexIndex], 1);
+	vec4 currentNormal = normalBuffer[vertexIndex];
 	
 	int col = vertexIndex % perRow;
 	int colmax = perRow; //column 마지막 번호
@@ -206,7 +206,7 @@ void main() {
 		}
 	}
 
-	normalBuffer[vertexIndex] = normalize(normal);
+	normalBuffer[vertexIndex] = normalize(vec4(normal,1));
 
 	float rnd = rand(vec2(1.3, 12)) * 0.04;
 	force += rnd * windForce(normalize(vec4(normal, 1))) + vel * DEFAULT_DAMPING;

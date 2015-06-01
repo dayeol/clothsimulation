@@ -19,7 +19,7 @@ vector<GLushort> indices;
 
 vector<vec4> colors;
 vector<vec3> normals;
-vector<vec3> particleNormals;
+vector<vec4> particleNormals;
 vector<vec2> textures;
 
 ObjectLoader planetObjLoader;
@@ -125,6 +125,7 @@ void initShader()
 	program.AddUniform("Projection");
 	program.AddUniform("LookAt");
 	program.AddUniform("TextureColor");
+	program.AddUniform("TextureNormal");
 	//program.AddUniform("AmbientProduct");
 	//program.AddUniform("DiffuseProduct");
 	//program.AddUniform("SpecularProduct");
@@ -245,7 +246,7 @@ void init()
 	glBufferData(GL_SHADER_STORAGE_BUFFER, size, 0, GL_DYNAMIC_DRAW);
 
 	//cloth normal
-	const int normalSize = particleNormals.size() * sizeof(vec3);
+	const int normalSize = particleNormals.size() * sizeof(vec4);
 	glGenBuffers(1, &g_normalsBuffer);
 
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_normalsBuffer);
@@ -259,6 +260,15 @@ void init()
 		glUniform1f(computeShader("shearRest"), sqrt(2) * (C_HEIGHT / ROWS));
 	}
 	computeShader.UnUse();
+
+	program.Use();
+	{
+		// Normal Input
+		glBindBuffer(GL_ARRAY_BUFFER, g_normalsBuffer);
+		glVertexAttribPointer(program["vNormal"], 4, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(program["vNormal"]);
+	}
+	program.UnUse();
 
 	setGLOptions();
 }

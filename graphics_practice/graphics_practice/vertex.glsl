@@ -18,7 +18,7 @@ uniform mat4 LookAt;
 
 void main()
 {
-    vec4 LightPosition = vec4(0, 0, 0.0, 1.0);
+    vec4 LightPosition = vec4(0, 0, 5.0, 1.0);
 	mat3 normalMatrix = transpose(inverse(mat3(ModelView)));
 	
 	fN = (vNormal.xyz);

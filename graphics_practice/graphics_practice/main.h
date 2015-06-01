@@ -30,7 +30,7 @@ extern mat4 model_view, look_at;
 
 extern vector<vec4> vertices; // vertex list
 extern vector<vec4> particles;
-extern vector<vec3> particleNormals;
+extern vector<vec4> particleNormals;
 extern vector<vec4> colors;
 extern vector<vec3> normals;
 extern vector<vec2> textures;
