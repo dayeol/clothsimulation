@@ -119,7 +119,7 @@ void initShader()
 	program.LoadFromFile(GL_FRAGMENT_SHADER, "fragment.glsl");
 	program.CreateAndLinkProgram();
 	program.AddAttribute("vPosition");	
-	program.AddAttribute("vNormal");
+	program.AddAttribute("v_normal");
 	program.AddAttribute("vTexCoord");
 	program.AddUniform("ModelView");
 	program.AddUniform("Projection");
@@ -265,8 +265,8 @@ void init()
 	{
 		// Normal Input
 		glBindBuffer(GL_ARRAY_BUFFER, g_normalsBuffer);
-		glVertexAttribPointer(program["vNormal"], 4, GL_FLOAT, GL_FALSE, 0, 0);
-		glEnableVertexAttribArray(program["vNormal"]);
+		glVertexAttribPointer(program["v_normal"], 4, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(program["v_normal"]);
 	}
 	program.UnUse();
 

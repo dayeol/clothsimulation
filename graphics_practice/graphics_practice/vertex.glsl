@@ -1,7 +1,7 @@
 #version 440
 
 in   vec4 vPosition;
-in   vec3 vNormal;
+in   vec3 v_normal;
 in	 vec2 vTexCoord;
 
 // output values that will be interpretated per-fragment
@@ -21,7 +21,7 @@ void main()
     vec4 LightPosition = vec4(0, 0, 5.0, 1.0);
 	mat3 normalMatrix = transpose(inverse(mat3(ModelView)));
 	
-	fN = (vNormal.xyz);
+	fN = (v_normal.xyz);
 	fE = (inverse(LookAt) * vec4(0,0,0,1)).xyz - (ModelView*vPosition).xyz;
     fL = (LightPosition - ModelView*vPosition).xyz;
 
