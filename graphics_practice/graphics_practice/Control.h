@@ -20,7 +20,6 @@ public:
 	GLfloat animationSpeed;
 	GLfloat revolutionSpeedFactor;
 	GLfloat rotationSpeedFactor;
-	GLboolean doAnimation;
 
 	bool zoomingIn;
 	bool zoomingOut;
@@ -36,7 +35,11 @@ public:
 	//rocket control
 	int rocketCountdown;
 
+	bool isWireframe;
+	bool isWind;
+	GLboolean doAnimation;
 private:
+
 	bool isDragging;
 	int dragOriginX;
 	int dragOriginY;

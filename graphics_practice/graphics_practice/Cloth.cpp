@@ -2,7 +2,7 @@
 #include "main.h"
 #include "SOIL.h"
 #include <ctime>
-
+#include "Control.h"
 Cloth::Cloth(float _x, float _y, int _numX, int _numY)
 {
 	x = _x;
@@ -89,28 +89,32 @@ void Cloth::draw()
 
 	mvstack.push(model_view);
 
-	computeShader.Use();
+	if (controller.doAnimation)
 	{
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, g_verticesBuffer[previousInput]);
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, g_verticesBuffer[currentInput]);
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, g_verticesBuffer[currentOutput]);
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, g_normalsBuffer);
+		computeShader.Use();
+		{
+			glUniform1i(computeShader("isWind"), controller.isWind);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, g_verticesBuffer[previousInput]);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, g_verticesBuffer[currentInput]);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, g_verticesBuffer[currentOutput]);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, g_normalsBuffer);
 
-		// Process all vertices.
-		glDispatchCompute(ROWS, ROWS , 1);
+			// Process all vertices.
+			glDispatchCompute(ROWS, ROWS, 1);
 
-		// Make sure, all vertices and normals are written.
-		glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
+			// Make sure, all vertices and normals are written.
+			glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
 
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, 0);
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, 0);
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, 0);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, 0);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, 0);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, 0);
+		}
+		computeShader.UnUse();
 	}
-	computeShader.UnUse();
-	
 	program.Use();
 	{
+		glUniform1i(program("isWireframe"), controller.isWireframe);
 		glActiveTexture(GL_TEXTURE0);
 		glEnable(GL_TEXTURE_2D);
 		glUniform1i(program["TextureColor"], 0);
@@ -127,7 +131,7 @@ void Cloth::draw()
 		glBindBuffer(GL_ARRAY_BUFFER, g_verticesBuffer[currentOutput]);
 		glVertexAttribPointer(program["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, 0);
 		for (int i = 0; i < numTriangle; i++)
-			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, &(indices[i * 3]));
+			glDrawElements(controller.isWireframe?GL_LINE_LOOP:GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, &(indices[i * 3]));
 
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -144,9 +148,11 @@ void Cloth::draw()
 	}
 	program.UnUse();
 
-	previousInput = (previousInput + 1) % 3;
-	currentInput = (currentInput + 1) % 3;
-	currentOutput = (currentOutput + 1) % 3;
-
+	if (controller.doAnimation)
+	{
+		previousInput = (previousInput + 1) % 3;
+		currentInput = (currentInput + 1) % 3;
+		currentOutput = (currentOutput + 1) % 3;
+	}
 	model_view = mvstack.pop();
 }

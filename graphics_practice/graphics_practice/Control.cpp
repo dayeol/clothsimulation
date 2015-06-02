@@ -6,7 +6,7 @@ Control controller;
 
 Control::Control()
 {
-	doAnimation = true; 
+	doAnimation = false; 
 	animationSpeed = 0.1f;
 	revolutionSpeedFactor = 1.0f;
 	rotationSpeedFactor = 1.0f;
@@ -54,14 +54,13 @@ void Control::keyDown(unsigned char key, int x, int y)
 {
 	switch (key){
 	case 'q':
-		//공전속도 증가
-		revolutionSpeedFactor += 0.1f;
+		//toggle wireframe
+		if (isWireframe == false)
+			isWireframe = true;
+		else
+			isWireframe = false;
 		break;
-	case 'a':
-		//공전속도 감소
-		revolutionSpeedFactor -= 0.1f;
-		break;
-	case 's':
+	case ' ':
 		//toggle 공전 및 자전
 		if (doAnimation == false)
 			doAnimation = true;
@@ -69,16 +68,11 @@ void Control::keyDown(unsigned char key, int x, int y)
 			doAnimation = false;
 		break;
 	case 'w':
-		//공전 및 자전 시작
-		doAnimation = true;
-		break;
-	case 'e':
-		//자전속도 증가
-		rotationSpeedFactor += 0.1f;
-		break;
-	case 'd':
-		//자전속도 감소
-		rotationSpeedFactor -= 0.1f;
+		//toggle wind
+		if (isWind == false)
+			isWind = true;
+		else
+			isWind = false;
 		break;
 	case 'r':
 		//리셋

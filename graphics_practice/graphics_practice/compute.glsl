@@ -2,6 +2,7 @@
 
 uniform float dt;
 uniform int perRow;
+uniform int isWind;
 uniform float structRest;
 uniform float shearRest;
 //kg
@@ -209,8 +210,11 @@ void main() {
 	normalBuffer[vertexIndex] = normalize(vec4(normal,1));
 
 	float rnd = rand(vec2(1.3, 12)) * 0.04;
-	force += rnd * windForce(normalize(vec4(normal, 1))) + vel * DEFAULT_DAMPING;
 
+	if (isWind)
+	{
+		force += rnd * windForce(normalize(vec4(normal, 1))) + vel * DEFAULT_DAMPING;
+	}
 	//verlet integration
 	vec4 acceleration;
 	if (mass == 0)

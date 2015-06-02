@@ -126,6 +126,7 @@ void initShader()
 	program.AddUniform("LookAt");
 	program.AddUniform("TextureColor");
 	program.AddUniform("TextureNormal");
+	program.AddUniform("isWireframe");
 	//program.AddUniform("AmbientProduct");
 	//program.AddUniform("DiffuseProduct");
 	//program.AddUniform("SpecularProduct");
@@ -136,6 +137,7 @@ void initShader()
 	computeShader.LoadFromFile(GL_COMPUTE_SHADER, "compute.glsl");
 	computeShader.CreateAndLinkProgram();
 	computeShader.AddUniform("perRow");
+	computeShader.AddUniform("isWind");
 	computeShader.AddUniform("dt");
 	computeShader.AddUniform("structRest");//rest distance of structural spring
 	computeShader.AddUniform("shearRest");//rest distance of shear spring
@@ -243,7 +245,7 @@ void init()
 	glBufferData(GL_SHADER_STORAGE_BUFFER, size, &particles[0], GL_DYNAMIC_DRAW);
 
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_verticesBuffer[2]);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, size, 0, GL_DYNAMIC_DRAW);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, size, &particles[0], GL_DYNAMIC_DRAW);
 
 	//cloth normal
 	const int normalSize = particleNormals.size() * sizeof(vec4);

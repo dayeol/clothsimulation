@@ -9,6 +9,7 @@ out vec4 fColor;
 
 uniform sampler2D TextureColor;
 uniform sampler2D TextureNormal;
+uniform int isWireframe;
 
 //uniform vec4 AmbientProduct;
 //uniform vec4 DiffuseProduct;
@@ -60,7 +61,8 @@ void main()
 	fColor =  ambient + diffuse;// + vec4(1,1,1,1);
 	fColor.a = 1;
 	
-	//fColor = vec4(1,1,1,1);
+	if (isWireframe)
+		fColor = vec4(1,1,1,1);
 	//fColor.a = 1.0;
 	
 } 
