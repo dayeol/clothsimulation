@@ -61,7 +61,7 @@ void main()
 	fColor =  ambient + diffuse;// + vec4(1,1,1,1);
 	fColor.a = 1;
 	
-	if (isWireframe)
+	if (isWireframe > 0)
 		fColor = vec4(1,1,1,1);
 	//fColor.a = 1.0;
 	

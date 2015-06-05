@@ -211,7 +211,7 @@ void main() {
 
 	float rnd = rand(vec2(1.3, 12)) * 0.04;
 
-	if (isWind)
+	if (isWind > 0)
 	{
 		force += rnd * windForce(normalize(vec4(normal, 1))) + vel * DEFAULT_DAMPING;
 	}
