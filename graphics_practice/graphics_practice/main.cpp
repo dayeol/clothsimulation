@@ -28,7 +28,7 @@ ObjectLoader planetObjLoader;
 ObjectLoader orbitObjLoader;
 ObjectLoader cubeObjLoader;
 ObjectLoader sphereObjLoader;
-GLSLShader program, computeShader, floorShader, sphereShader;
+GLSLShader program, computeShader, objectShader;
 
 GLuint g_verticesBuffer[3];
 GLuint g_normalsBuffer;
@@ -94,19 +94,12 @@ void drawScene()
 	}
 	program.UnUse();
 
-	floorShader.Use();
+	objectShader.Use();
 	{
-		glUniformMatrix4fv(floorShader("Projection"), 1, GL_TRUE, projection);
-		glUniformMatrix4fv(floorShader("LookAtMat"), 1, GL_TRUE, look_at);
+		glUniformMatrix4fv(objectShader("Projection"), 1, GL_TRUE, projection);
+		glUniformMatrix4fv(objectShader("LookAtMat"), 1, GL_TRUE, look_at);
 	}
-	floorShader.UnUse();
-
-	sphereShader.Use();
-	{
-		glUniformMatrix4fv(sphereShader("Projection"), 1, GL_TRUE, projection);
-		glUniformMatrix4fv(sphereShader("LookAtMat"), 1, GL_TRUE, look_at);
-	}
-	sphereShader.UnUse();
+	objectShader.UnUse();
 
 	sceneObject->traverse();
 
@@ -156,24 +149,17 @@ void initShader()
 	computeShader.AddUniform("sphereX"); // sphere x position
 
 	//Floor Program
-	floorShader.LoadFromFile(GL_VERTEX_SHADER, "floorVert.glsl");
-	floorShader.LoadFromFile(GL_FRAGMENT_SHADER, "floorFrag.glsl");
-	floorShader.CreateAndLinkProgram();
-	floorShader.AddAttribute("vPosition");
-	floorShader.AddAttribute("vColor");
-	floorShader.AddUniform("ModelView");
-	floorShader.AddUniform("Projection");
-	floorShader.AddUniform("LookAt");
-
-	//Sphere Program
-	sphereShader.LoadFromFile(GL_VERTEX_SHADER, "sphereVert.glsl");
-	sphereShader.LoadFromFile(GL_FRAGMENT_SHADER, "sphereFrag.glsl");
-	sphereShader.CreateAndLinkProgram();
-	sphereShader.AddAttribute("vPosition");
-	sphereShader.AddAttribute("vColor");
-	sphereShader.AddUniform("ModelView");
-	sphereShader.AddUniform("Projection");
-	sphereShader.AddUniform("LookAt");
+	objectShader.LoadFromFile(GL_VERTEX_SHADER, "objectVert.glsl");
+	objectShader.LoadFromFile(GL_FRAGMENT_SHADER, "objectFrag.glsl");
+	objectShader.CreateAndLinkProgram();
+	objectShader.AddAttribute("vPosition");
+	objectShader.AddAttribute("v_normal");
+	objectShader.AddAttribute("vTexCoord");
+	objectShader.AddUniform("ModelView");
+	objectShader.AddUniform("Projection");
+	objectShader.AddUniform("LookAt");
+	objectShader.AddUniform("textureColor");
+	objectShader.AddUniform("isFloor");
 }
 void initScene()
 {
@@ -188,6 +174,7 @@ void initScene()
 	
 	//구 생성
 	sphereObjLoader.addVerticesList();
+	sphereObjLoader.addTextureCoord();
 	sphereObjLoader.addNormals();
 	Sphere * sphere = new Sphere(0, sphereObjLoader.faces.size() * 3);
 	
@@ -235,9 +222,9 @@ void init()
 	program.UnUse();
 
 	bufferIndex = 0;
-	bufferSize = sizeof(vec4) * (vertices.size() + colors.size());
+	bufferSize = sizeof(vec4) * vertices.size() + sizeof(vec3) * normals.size() + sizeof(vec2) * textures.size();
 
-	floorShader.Use();
+	objectShader.Use();
 	{
 		glGenBuffers(1, &vertexBuffer);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -246,24 +233,35 @@ void init()
 		glBufferSubData(GL_ARRAY_BUFFER, bufferIndex, sizeof(vec4) * vertices.size(), &vertices[0]);
 		bufferIndex += sizeof(vec4) * vertices.size();
 
-		glBufferSubData(GL_ARRAY_BUFFER, bufferIndex, sizeof(vec4) * colors.size(), &colors[0]);
-		bufferIndex += sizeof(vec4) * colors.size();
+		glBufferSubData(GL_ARRAY_BUFFER, bufferIndex, sizeof(vec2) * textures.size(), &textures[0]);
+		bufferIndex += sizeof(vec2) * textures.size();
+
+		glBufferSubData(GL_ARRAY_BUFFER, bufferIndex, sizeof(vec3) * normals.size(), &normals[0]);
+		bufferIndex += sizeof(vec3) * normals.size();
+
+		//glBufferSubData(GL_ARRAY_BUFFER, bufferIndex, sizeof(vec4) * colors.size(), &colors[0]);
+		//bufferIndex += sizeof(vec4) * colors.size();
 	}
-	floorShader.UnUse();
+	objectShader.UnUse();
 
 	/* Shader에 들어가는 Input 값들임 */
 	bufferIndex=0;
 	//Vertex Position
-	floorShader.Use();
+	objectShader.Use();
 	{
-		glVertexAttribPointer(floorShader["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
+		glVertexAttribPointer(objectShader["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
 		bufferIndex += sizeof(vec4) * vertices.size();
-		glEnableVertexAttribArray(floorShader["vPosition"]);
-		//Vertex Color
-		glVertexAttribPointer(floorShader["vColor"], 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
-		glEnableVertexAttribArray(floorShader["vColor"]);
+		glEnableVertexAttribArray(objectShader["vPosition"]);
+		
+		glVertexAttribPointer(objectShader["vTexCoord"], 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
+		bufferIndex += sizeof(vec2) * textures.size();
+		glEnableVertexAttribArray(objectShader["vTexCoord"]);
+
+		glVertexAttribPointer(objectShader["v_normal"], 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
+		bufferIndex += sizeof(vec3) * normals.size();
+		glEnableVertexAttribArray(objectShader["v_normal"]);
 	}
-	floorShader.UnUse();
+	objectShader.UnUse();
 	
 	//cloth
 	const int size = particles.size() * sizeof(vec4);

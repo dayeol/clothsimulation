@@ -166,10 +166,10 @@
     <None Include="floorVert.glsl">
       <Filter>소스 파일\shaders</Filter>
     </None>
-    <None Include="sphereVert.glsl">
+    <None Include="objectFrag.glsl">
       <Filter>소스 파일\shaders</Filter>
     </None>
-    <None Include="sphereFrag.glsl">
+    <None Include="objectVert.glsl">
       <Filter>소스 파일\shaders</Filter>
     </None>
   </ItemGroup>

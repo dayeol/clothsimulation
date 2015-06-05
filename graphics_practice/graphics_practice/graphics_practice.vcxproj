@@ -115,8 +115,8 @@
     <None Include="floorVert.glsl" />
     <None Include="fragment.glsl" />
     <None Include="select.glsl" />
-    <None Include="sphereFrag.glsl" />
-    <None Include="sphereVert.glsl" />
+    <None Include="objectFrag.glsl" />
+    <None Include="objectVert.glsl" />
     <None Include="vertex.glsl" />
     <None Include="vertex_selected.glsl" />
   </ItemGroup>

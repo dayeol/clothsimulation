@@ -269,10 +269,10 @@ void main() {
 		vertexOutBuffer[vertexIndex] = next;
 	}
 
-	/*if(vertexOutBuffer[vertexIndex].z < -1)
+	if(vertexOutBuffer[vertexIndex].z < -1)
 	{
-		floor
+		vertexOutBuffer[vertexIndex] = vertexCurrBuffer[vertexIndex];
 	}
-	*/
+	
 	barrier();
 }

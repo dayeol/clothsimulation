@@ -1,16 +1,14 @@
 #version 440
 
 in   vec4 vPosition;
-//in   vec4 vColor;
-//in   vec3 v_normal;
-//in	 vec2 vTexCoord;
+in   vec3 v_normal;
+in	 vec2 vTexCoord;
 
-out  vec4 color;
+out  vec2 texCoord;
 
 uniform mat4 ModelView;
 uniform mat4 Projection;
 uniform mat4 LookAt;
-//uniform vec4 LightPosition;
 
 void main()
 {
@@ -22,7 +20,7 @@ void main()
 	fE = (inverse(LookAt) * vec4(0,0,0,1)).xyz - (ModelView*vPosition).xyz;
     fL = (LightPosition - ModelView*vPosition).xyz;
 	*/
-	//texCoord = vTexCoord;
+
+	texCoord = vTexCoord;
 	gl_Position = Projection * LookAt * ModelView * vPosition;
-	//color = vColor;
 }
