@@ -78,6 +78,9 @@
     <ClCompile Include="Cloth.cpp">
       <Filter>소스 파일\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="Sphere.cpp">
+      <Filter>소스 파일\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -137,6 +140,9 @@
     <ClInclude Include="Cloth.h">
       <Filter>헤더 파일\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="Sphere.h">
+      <Filter>헤더 파일\Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment.glsl">
@@ -158,6 +164,12 @@
       <Filter>소스 파일\shaders</Filter>
     </None>
     <None Include="floorVert.glsl">
+      <Filter>소스 파일\shaders</Filter>
+    </None>
+    <None Include="sphereVert.glsl">
+      <Filter>소스 파일\shaders</Filter>
+    </None>
+    <None Include="sphereFrag.glsl">
       <Filter>소스 파일\shaders</Filter>
     </None>
   </ItemGroup>

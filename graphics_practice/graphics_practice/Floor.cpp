@@ -22,6 +22,12 @@ Floor::Floor(float _x, float _y)
 			colors.push_back(vec4(1, 0.5, 1, 1));
 			colors.push_back(vec4(1, 0.5, 1, 1));
 
+			normals.push_back(vec3(0, 0, 1));
+			normals.push_back(vec3(0, 0, 1));
+			normals.push_back(vec3(0, 0, 1));
+			normals.push_back(vec3(0, 0, 1));
+
+			totalNumberOfVertices+= 4;
 			size++;
 		}
 	}

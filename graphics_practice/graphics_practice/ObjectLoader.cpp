@@ -13,7 +13,7 @@ void ObjectLoader::readObjFile(string fileName)
 	if (!fin)
 	{
 		cout << "Read obj error !" << endl;
-		exit(0);
+		//exit(0);
 	}
 	int j = 1;
 	while (getline(fin, line))

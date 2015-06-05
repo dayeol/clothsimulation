@@ -77,6 +77,7 @@
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="ObjectLoader.cpp" />
     <ClCompile Include="SOIL.c" />
+    <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="stb_image_aug.c" />
   </ItemGroup>
   <ItemGroup>
@@ -96,6 +97,7 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectLoader.h" />
     <ClInclude Include="SOIL.h" />
+    <ClInclude Include="Sphere.h" />
     <ClInclude Include="stbi_DDS_aug.h" />
     <ClInclude Include="stbi_DDS_aug_c.h" />
     <ClInclude Include="stb_image_aug.h" />
@@ -113,6 +115,8 @@
     <None Include="floorVert.glsl" />
     <None Include="fragment.glsl" />
     <None Include="select.glsl" />
+    <None Include="sphereFrag.glsl" />
+    <None Include="sphereVert.glsl" />
     <None Include="vertex.glsl" />
     <None Include="vertex_selected.glsl" />
   </ItemGroup>

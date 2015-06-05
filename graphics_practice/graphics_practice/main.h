@@ -23,7 +23,7 @@ using namespace std;
 
 extern class Object* sceneObject;
 
-extern GLSLShader program, computeShader, floorShader;
+extern GLSLShader program, computeShader, floorShader, sphereShader;
 
 extern MatrixStack mvstack;
 extern mat4 model_view, look_at;
@@ -34,6 +34,7 @@ extern vector<vec4> particleNormals;
 extern vector<vec4> colors;
 extern vector<vec3> normals;
 extern vector<vec2> textures;
+extern vector<vec2> particleTextures;
 extern vector<GLushort> indices;
 
 extern GLuint g_verticesBuffer[3];

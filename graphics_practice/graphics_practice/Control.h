@@ -27,7 +27,11 @@ public:
 	bool movingRight;
 	bool movingUp;
 	bool movingDown;
+	bool sphereMovingLeft;
+	bool sphereMovingRight;
 
+	float sphereX;
+	mat4 sphere;
 
 	void launchRocketOnCountdown();
 	void launchRocket();
@@ -37,6 +41,7 @@ public:
 
 	bool isWireframe;
 	bool isWind;
+	bool isPin;
 	GLboolean doAnimation;
 private:
 

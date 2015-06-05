@@ -3,8 +3,12 @@
 uniform float dt;
 uniform int perRow;
 uniform int isWind;
+uniform int isPin;
 uniform float structRest;
 uniform float shearRest;
+uniform mat4 sphere;
+uniform float sphereX;
+
 //kg
 #define MASS 0.5
 #define GRAVITY vec4(0.0,0.0,-0.02f, 0.0)
@@ -52,6 +56,7 @@ vec4 windForce(vec4 normal)
 } 
 
 void main() {
+	mat4 inv_sphere = inverse(sphere);
 	int vertexIndex = int(gl_WorkGroupID*perRow + gl_LocalInvocationIndex);
 	vec4 current = vertexCurrBuffer[vertexIndex];
 	vec4 previous = vertexPrevBuffer[vertexIndex];
@@ -68,11 +73,14 @@ void main() {
 	vec4 force = vec4(0, 0, 0, 0);
 	
 	//pin
-	if ( vertexIndex == 0 || vertexIndex == perRow-1)
+	if (isPin > 0)
 	{
-		mass = 0;
+		if ( vertexIndex == 0 || vertexIndex == perRow-1)
+		{
+			mass = 0;
+		}
 	}
-
+	
 	//gravity
 	force += GRAVITY * mass + vel * DEFAULT_DAMPING;
 
@@ -228,6 +236,43 @@ void main() {
 	vec4 next = current + vel*dt + acceleration * dt * dt;
 
 	//vec4 next = 2.0 * current - previous + acceleration * dt * dt;
-	vertexOutBuffer[vertexIndex] = next;
+
+	//collision with sphere
+	vec4 X0 = inv_sphere * next;
+	vec3 d0 = next.xyz - vec3(sphereX, 0, 0); // center of sphere vec3(0, 0, 0)
+	float dist = sqrt(d0.x * d0.x + d0.y * d0.y + d0.z * d0.z);
+	float radius = 0.55;
+
+	if(dist < radius) 
+	{
+		d0 = (radius - dist) * d0 / dist;
+
+		// Transform the delta back to originala space
+		vec3 d = vec3(0.0, 0, 0);
+		vec3 transformInv = vec3(sphere[0].x, sphere[1].x, sphere[2].x);
+		transformInv /= dot(transformInv, transformInv);
+		d.x = dot(d0, transformInv);
+
+		transformInv = vec3(sphere[0].y, sphere[1].y, sphere[2].y);
+		transformInv /= dot(transformInv, transformInv);
+		d.y = dot(d0, transformInv);
+
+		transformInv = vec3(sphere[0].z, sphere[1].z, sphere[2].z);
+		transformInv /= dot(transformInv, transformInv);
+		d.z = dot(d0, transformInv);
+
+		next += vec4(d,1);
+		vertexOutBuffer[vertexIndex] = vec4(next.xyz, 1);
+	}
+	else
+	{
+		vertexOutBuffer[vertexIndex] = next;
+	}
+
+	/*if(vertexOutBuffer[vertexIndex].z < -1)
+	{
+		floor
+	}
+	*/
 	barrier();
 }

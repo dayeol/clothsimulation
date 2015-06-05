@@ -37,7 +37,7 @@ Cloth::Cloth(float _x, float _y, int _numX, int _numY)
 				1,
 				1.0));
 			particleNormals.push_back(vec4(0.0, 0.0, 0.0, 1.0));
-			textures.push_back(vec2((float)i/numX, (float)j/numY));
+			particleTextures.push_back(vec2((float)i/numX, (float)j/numY));
 		}
 	}
 
@@ -94,6 +94,9 @@ void Cloth::draw()
 		computeShader.Use();
 		{
 			glUniform1i(computeShader("isWind"), controller.isWind);
+			glUniform1i(computeShader("isPin"), controller.isPin);
+			glUniformMatrix4fv(computeShader("sphere"), 1, GL_TRUE, controller.sphere * Translate(controller.sphereX, 0, 0));
+			glUniform1f(computeShader("sphereX"), controller.sphereX);
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, g_verticesBuffer[previousInput]);
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, g_verticesBuffer[currentInput]);
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, g_verticesBuffer[currentOutput]);

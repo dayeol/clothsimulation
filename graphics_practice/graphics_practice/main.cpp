@@ -3,6 +3,7 @@
 #include "Control.h"
 #include "Floor.h"
 #include "Cloth.h"
+#include "Sphere.h"
 #include "MatrixStack.h"
 #include "SOIL.h"
 #include <cstdlib>
@@ -21,16 +22,18 @@ vector<vec4> colors;
 vector<vec3> normals;
 vector<vec4> particleNormals;
 vector<vec2> textures;
+vector<vec2> particleTextures;
 
 ObjectLoader planetObjLoader;
 ObjectLoader orbitObjLoader;
 ObjectLoader cubeObjLoader;
-GLSLShader program, computeShader, floorShader;
+ObjectLoader sphereObjLoader;
+GLSLShader program, computeShader, floorShader, sphereShader;
 
 GLuint g_verticesBuffer[3];
 GLuint g_normalsBuffer;
 GLuint vertexBuffer;
-GLuint vertexBuffer2;
+GLuint vertexBufferCloth;
 
 MatrixStack mvstack;
 mat4 model_view, projection;
@@ -98,6 +101,13 @@ void drawScene()
 	}
 	floorShader.UnUse();
 
+	sphereShader.Use();
+	{
+		glUniformMatrix4fv(sphereShader("Projection"), 1, GL_TRUE, projection);
+		glUniformMatrix4fv(sphereShader("LookAtMat"), 1, GL_TRUE, look_at);
+	}
+	sphereShader.UnUse();
+
 	sceneObject->traverse();
 
 }
@@ -138,9 +148,12 @@ void initShader()
 	computeShader.CreateAndLinkProgram();
 	computeShader.AddUniform("perRow");
 	computeShader.AddUniform("isWind");
+	computeShader.AddUniform("isPin");
 	computeShader.AddUniform("dt");
 	computeShader.AddUniform("structRest");//rest distance of structural spring
 	computeShader.AddUniform("shearRest");//rest distance of shear spring
+	computeShader.AddUniform("sphere"); // sphere matrix
+	computeShader.AddUniform("sphereX"); // sphere x position
 
 	//Floor Program
 	floorShader.LoadFromFile(GL_VERTEX_SHADER, "floorVert.glsl");
@@ -151,14 +164,35 @@ void initShader()
 	floorShader.AddUniform("ModelView");
 	floorShader.AddUniform("Projection");
 	floorShader.AddUniform("LookAt");
+
+	//Sphere Program
+	sphereShader.LoadFromFile(GL_VERTEX_SHADER, "sphereVert.glsl");
+	sphereShader.LoadFromFile(GL_FRAGMENT_SHADER, "sphereFrag.glsl");
+	sphereShader.CreateAndLinkProgram();
+	sphereShader.AddAttribute("vPosition");
+	sphereShader.AddAttribute("vColor");
+	sphereShader.AddUniform("ModelView");
+	sphereShader.AddUniform("Projection");
+	sphereShader.AddUniform("LookAt");
 }
 void initScene()
 {
+	//구 obj 로드
+	sphereObjLoader.readObjFile("TexSphere.obj");
+	
 	//바닥 격자점 만들기
 	sceneObject = new Floor(15, 15);
 
+	//Cloth 생성
 	Cloth * cloth = new Cloth(C_WIDTH, C_HEIGHT, ROWS, COLS);
+	
+	//구 생성
+	sphereObjLoader.addVerticesList();
+	sphereObjLoader.addNormals();
+	Sphere * sphere = new Sphere(0, sphereObjLoader.faces.size() * 3);
+	
 	sceneObject->addChild(cloth);
+	cloth->addSibling(sphere);
 }
 
 void setGLOptions()
@@ -187,13 +221,13 @@ void init()
 	glBindVertexArray(vao);
 
 	unsigned int bufferIndex = 0;
-	unsigned int bufferSize = sizeof(vec2) * textures.size();
+	unsigned int bufferSize = sizeof(vec2) * particleTextures.size();
 
 	program.Use();
 	{
-		glGenBuffers(1, &vertexBuffer2);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer2);
-		glBufferData(GL_ARRAY_BUFFER, bufferSize, &textures[0], GL_DYNAMIC_DRAW);
+		glGenBuffers(1, &vertexBufferCloth);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBufferCloth);
+		glBufferData(GL_ARRAY_BUFFER, bufferSize, &particleTextures[0], GL_DYNAMIC_DRAW);
 
 		glEnableVertexAttribArray(program["vTexCoord"]);
 		glVertexAttribPointer(program["vTexCoord"], 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
@@ -230,13 +264,10 @@ void init()
 		glEnableVertexAttribArray(floorShader["vColor"]);
 	}
 	floorShader.UnUse();
-
+	
 	//cloth
 	const int size = particles.size() * sizeof(vec4);
 	glGenBuffers(3, g_verticesBuffer);
-	
-	//glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_verticesBuffer[0]);
-	//glBufferData(GL_SHADER_STORAGE_BUFFER, size, &particles[0], GL_DYNAMIC_DRAW);
 	
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_verticesBuffer[0]);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, size, &particles[0], GL_DYNAMIC_DRAW);
@@ -258,8 +289,11 @@ void init()
 	{
 		glUniform1i(computeShader("perRow"), ROWS + 1);
 		glUniform1f(computeShader("dt"), timeStep);
+		glUniform1f(computeShader("isPin"), controller.isPin);
 		glUniform1f(computeShader("structRest"), C_HEIGHT  / ROWS);
 		glUniform1f(computeShader("shearRest"), sqrt(2) * (C_HEIGHT / ROWS));
+		glUniformMatrix4fv(computeShader("sphere"), 1, GL_TRUE, controller.sphere);
+		glUniform1f(computeShader("sphereX"), controller.sphereX);
 	}
 	computeShader.UnUse();
 
@@ -321,6 +355,12 @@ void timer(int input)
 		camera.zoomIn();
 	else if (controller.zoomingOut)
 		camera.zoomOut();
+
+	if (controller.sphereMovingLeft)
+		controller.sphereX -= 0.01;
+	else if (controller.sphereMovingRight)
+		controller.sphereX += 0.01;
+
 	glutTimerFunc(1, timer, 0);
 	glutPostRedisplay();
 }

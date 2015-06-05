@@ -12,6 +12,7 @@ Control::Control()
 	rotationSpeedFactor = 1.0f;
 	rocketCountdown = 1000;
 	isDragging = false;
+	isPin = true;
 	dragOriginX = 0;
 	dragOriginY = 0;
 }
@@ -86,8 +87,19 @@ void Control::keyDown(unsigned char key, int x, int y)
 	case 'z':
 		zoomingIn = true;
 		break;
+	case 'o':
+		isPin = false;
+		break;
 	case 'p':
 		camera.toggleMode();
+		break;
+	case ',':
+		sphereMovingLeft = true;
+		//sphereX -= 0.01;
+		break;
+	case '.':
+		sphereMovingRight = true;
+		//sphereX += 0.01;
 		break;
 	case 27:
 		// ESC
@@ -146,6 +158,12 @@ void Control::keyUp(unsigned char key, int x, int y)
 		break;
 	case 'z':
 		zoomingIn = false;
+		break;
+	case ',':
+		sphereMovingLeft = false;
+		break;
+	case '.':
+		sphereMovingRight = false;
 		break;
 
 	default:
