@@ -154,6 +154,7 @@ void initShader()
 	objectShader.AddUniform("Projection");
 	objectShader.AddUniform("LookAt");
 	objectShader.AddUniform("TextureColor");
+	objectShader.AddUniform("TextureNormal");
 	objectShader.AddUniform("isWireframe");
 	objectShader.AddUniform("isFloor");
 }

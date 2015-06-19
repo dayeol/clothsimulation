@@ -9,13 +9,21 @@ Sphere::Sphere(int id, int _numVertex)
 	sphere_id = id;
 	numVertex = _numVertex;
 
-	texture = SOIL_load_OGL_texture
+	texture[0] = SOIL_load_OGL_texture
 	(
-		"towel.jpg",
+		"ball.jpg",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_TEXTURE_REPEATS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
 	);
+
+	texture[1] = SOIL_load_OGL_texture
+		(
+		"ball_normal.png",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_TEXTURE_REPEATS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+		);
 
 	if (sphere_id == 0)
 	{
@@ -44,7 +52,12 @@ void Sphere::draw()
 		glActiveTexture(GL_TEXTURE2);
 		glEnable(GL_TEXTURE_2D);
 		glUniform1i(program("TextureColor"), 2);
-		glBindTexture(GL_TEXTURE_2D, texture);
+		glBindTexture(GL_TEXTURE_2D, texture[0]);
+
+		glActiveTexture(GL_TEXTURE3);
+		glEnable(GL_TEXTURE_2D);
+		glUniform1i(program("TextureNormal"), 3);
+		glBindTexture(GL_TEXTURE_2D, texture[1]);
 
 		model_view = model_view * Translate(controller.sphereX, 0, 0) * Scale(0.5);
 		glUniformMatrix4fv(objectShader("ModelView"), 1, GL_TRUE, model_view);
@@ -63,6 +76,10 @@ void Sphere::draw()
 		for (int i = 0; i < numVertex / 3; i++)
 			glDrawArrays(controller.isWireframe ? GL_LINE_LOOP:GL_TRIANGLES, offset + i * 3, 3);
 		
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_TEXTURE_2D);
+
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glDisable(GL_TEXTURE_2D);

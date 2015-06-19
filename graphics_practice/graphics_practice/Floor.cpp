@@ -11,7 +11,7 @@ Floor::Floor(float _x, float _y)
 
 	texture = SOIL_load_OGL_texture
 	(
-		"towel2.jpg",
+		"grass.jpg",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_TEXTURE_REPEATS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
@@ -26,27 +26,31 @@ Floor::Floor(float _x, float _y)
 			float up = j + 1 + y;
 			float down = j + y;
 
-			vertices.push_back(vec4(i  - 0.5, j  - 0.5, -1, 1));
-			vertices.push_back(vec4(i  - 0.5, j  + 0.5, -1, 1));
+			vertices.push_back(vec4(i - 0.5, j  - 0.5, -1, 1));
+			vertices.push_back(vec4(i - 0.5, j  + 0.5, -1, 1));
+			vertices.push_back(vec4(i + 0.5, j - 0.5, -1, 1));
+
+			vertices.push_back(vec4(i - 0.5, j + 0.5, -1, 1));
+			vertices.push_back(vec4(i + 0.5, j - 0.5, -1, 1));
 			vertices.push_back(vec4(i  + 0.5, j  + 0.5, -1, 1));
-			vertices.push_back(vec4(i  + 0.5, j  - 0.5, -1, 1));
+			
+			normals.push_back(vec3(0, 0, 1));
+			normals.push_back(vec3(0, 0, 1));
+			normals.push_back(vec3(0, 0, 1));
+			normals.push_back(vec3(0, 0, 1));
+			normals.push_back(vec3(0, 0, 1));
+			normals.push_back(vec3(0, 0, 1));
 
-			normals.push_back(vec3(0, 0, 1));
-			normals.push_back(vec3(0, 0, 1));
-			normals.push_back(vec3(0, 0, 1));
-			normals.push_back(vec3(0, 0, 1));
-
-			/*textures.push_back(vec2(left / (float)(x * 2 + 1), down / (float)(y * 2 + 1)));
+			textures.push_back(vec2(left / (float)(x * 2 + 1), down / (float)(y * 2 + 1)));
 			textures.push_back(vec2(left / (float)(x * 2 + 1), up / (float)(y * 2 + 1)));
 			textures.push_back(vec2(right / (float)(x * 2 + 1), down / (float)(y * 2 + 1)));
-			textures.push_back(vec2(right / (float)(x * 2 + 1), up / (float)(y * 2 + 1)));*/
-			textures.push_back(vec2(0, 0));
-			textures.push_back(vec2(0, 0));
-			textures.push_back(vec2(0, 0));
-			textures.push_back(vec2(0, 0));
 
-			totalNumberOfVertices+= 4;
-			size++;
+			textures.push_back(vec2(left / (float)(x * 2 + 1), up / (float)(y * 2 + 1)));
+			textures.push_back(vec2(right / (float)(x * 2 + 1), down / (float)(y * 2 + 1)));
+			textures.push_back(vec2(right / (float)(x * 2 + 1), up / (float)(y * 2 + 1)));
+
+			totalNumberOfVertices+= 6;
+			size+= 2;
 		}
 	}
 }
@@ -68,9 +72,9 @@ void Floor::draw()
 		glUniform1i(objectShader("isWireframe"), controller.isWireframe);
 		glUniform1i(objectShader("isFloor"), 1);
 
-		glActiveTexture(GL_TEXTURE3);
+		glActiveTexture(GL_TEXTURE4);
 		glEnable(GL_TEXTURE_2D);
-		glUniform1i(program("TextureColor"), 3);
+		glUniform1i(program("TextureColor"), 4);
 		glBindTexture(GL_TEXTURE_2D, texture);
 
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -87,9 +91,9 @@ void Floor::draw()
 		glUniformMatrix4fv(objectShader("ModelView"), 1, GL_TRUE, model_view);
 		
 		for (int i = 0; i < size; i++)
-			glDrawArrays(controller.isWireframe?GL_LINE_LOOP:GL_TRIANGLE_FAN, i * 4, 4);
+			glDrawArrays(controller.isWireframe?GL_LINE_LOOP:GL_TRIANGLES, i * 3, 3);
 
-		glActiveTexture(GL_TEXTURE3);
+		glActiveTexture(GL_TEXTURE4);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glDisable(GL_TEXTURE_2D);
 	}
