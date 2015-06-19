@@ -10,11 +10,19 @@ uniform mat4 sphere;
 uniform float sphereX;
 
 //kg
-#define MASS 0.5
-#define GRAVITY vec4(0.0,0.0,-0.02f, 0.0)
-#define STIFFNESS 5
-#define DAMPING	-0.5
-#define DEFAULT_DAMPING -0.0255
+#define MASS 1
+#define GRAVITY vec4(0.0,0.0,-0.04f, 0.0)
+
+
+#define STRUCT_STIFF 30
+#define STRUCT_DAMP	-0.5
+#define SHEAR_STIFF 30
+#define SHEAR_DAMP	-0.5
+#define BEND_STIFF 15
+#define BEND_DAMP	-0.5
+
+#define GRAVITY_DAMPING -0.20
+#define DEFAULT_DAMPING -0.25
 #define WIND vec4(1.0, 0.0, 0.0, 0.0)
 
 layout(std430, binding = 1) buffer VertexPrevious{
@@ -33,13 +41,13 @@ layout(std430, binding = 4) buffer Normal{
 
 layout(local_size_x = 1024) in;
 
-vec4 springForce(vec4 vel, vec4 velNeigh, vec4 a, vec4 b, float rest)
+vec4 springForce(vec4 vel, vec4 velNeigh, vec4 a, vec4 b, float rest, float stiffness, float damping)
 {
 	vec4 deltaP = a - b;
 	vec4 deltaV = vel - (velNeigh / dt);
 	float d = distance(a, b);
-	float stiff = (rest - d) *STIFFNESS;
-	float damp = DAMPING* (dot(deltaV, deltaP) / d);
+	float stiff = (rest - d) *stiffness;
+	float damp = damping* (dot(deltaV, deltaP) / d);
 	return (stiff + damp) * normalize(deltaP);
 }
 
@@ -53,9 +61,58 @@ vec4 windForce(vec4 normal)
 {
 	vec4 n = normal;
 	return dot(n, WIND) * WIND;
-} 
+}
+
+struct neighbor
+{
+	int index;
+	float rest;
+	float stiff;
+	float damp;
+};
+
+//neighbor types
+#define NO_NEIGHBOR	-1
+#define	UP 	0
+#define DOWN 1
+#define LEFT 2
+#define RIGHT 3
+#define S1 4
+#define S2 5
+#define S3 6
+#define S4 7
+#define UP2 8
+#define DOWN2 9
+#define LEFT2 10
+#define RIGHT2 11
+
+bool isNeighbor(int index)
+{
+	return index != NO_NEIGHBOR;
+}
+
+vec3 gramSchmidt(vec3 u, vec3 v)
+{
+	vec3 uProjV;
+
+	float vDotU;
+
+	float uDotU = dot(u, u);
+
+	if (uDotU == 0.0)
+	{
+		return vec3(0.0, 0.0, 0.0);
+	}
+
+	vDotU = dot(v, u);
+
+	uProjV = u * (vDotU / uDotU);
+
+	return v - uProjV;
+}
 
 void main() {
+	neighbor neighbors[12];
 	mat4 inv_sphere = inverse(sphere);
 	int vertexIndex = int(gl_WorkGroupID*perRow + gl_LocalInvocationIndex);
 	vec4 current = vertexCurrBuffer[vertexIndex];
@@ -75,109 +132,64 @@ void main() {
 	//pin
 	if (isPin > 0)
 	{
-		if ( vertexIndex == 0 || vertexIndex == perRow-1)
+		//if ( vertexIndex == 0 || vertexIndex == perRow-1 || vertexIndex == perRow * perRow -1 || vertexIndex == perRow*(perRow-1))
+		if ( vertexIndex == 0  || vertexIndex == perRow-1)
 		{
 			mass = 0;
 		}
 	}
 	
-	//gravity
-	force += GRAVITY * mass + vel * DEFAULT_DAMPING;
+
+
+	bool movable = true;
 
 	//structural force
-	int rightIndex;
-	rightIndex = vertexIndex + 1;
-	if (rightIndex % perRow > col) // same row
-	{
-		vec4 right = vertexCurrBuffer[rightIndex];
-		vec4 velNeigh = right - vertexPrevBuffer[rightIndex];
-		force += springForce(vel, velNeigh, current, right, structRest);
-	}
-	int leftIndex = vertexIndex - 1;
-	if (leftIndex % perRow < col)
-	{
-		vec4 left = vertexCurrBuffer[leftIndex];
-		vec4 velNeigh = left - vertexPrevBuffer[leftIndex];
-		force += springForce(vel, velNeigh, current, left, structRest);
-	}
-	int belowIndex = vertexIndex + perRow;
-	if (belowIndex < perRow*perRow)
-	{
-		vec4 below = vertexCurrBuffer[belowIndex];
-		vec4 velNeigh = below - vertexPrevBuffer[belowIndex];
-		force += springForce(vel, velNeigh, current, below, structRest);
-	}
-	int upperIndex = vertexIndex - perRow;
-	if (upperIndex >= 0)
-	{
-		vec4 upper;
-		upper = vertexCurrBuffer[upperIndex];
-		vec4 velNeigh = upper - vertexPrevBuffer[upperIndex];
-		force += springForce(vel, velNeigh, current, upper, structRest);
-	}
-
+	neighbors[RIGHT].index = ((vertexIndex + 1)%perRow > col )?vertexIndex + 1:NO_NEIGHBOR;
+	neighbors[LEFT].index = ((vertexIndex - 1) % perRow < col) ? vertexIndex - 1 : NO_NEIGHBOR;
+	neighbors[DOWN].index = ((vertexIndex + perRow) < perRow*perRow) ? vertexIndex + perRow : NO_NEIGHBOR;
+	neighbors[UP].index = ((vertexIndex - perRow) >= 0) ? vertexIndex - perRow : NO_NEIGHBOR;
+	int rightIndex = neighbors[RIGHT].index;
+	int leftIndex = neighbors[LEFT].index;
+	int upIndex = neighbors[UP].index;
+	int downIndex = neighbors[DOWN].index;
 	//shear force
-	int i1, i2, i3, i4;
-	i1 = vertexIndex + 1 - perRow;
-	i2 = vertexIndex - 1 - perRow;
-	i3 = vertexIndex - 1 + perRow;
-	i4 = vertexIndex + 1 + perRow;
-	if (rightIndex % perRow > col && i1 >= 0)
-	{
-		vec4 shear1 = vertexCurrBuffer[i1];
-		vec4 velNeigh = shear1 - vertexPrevBuffer[i1];
-		force += springForce(vel, velNeigh, current, shear1, shearRest);
-	}
-	if (leftIndex % perRow < col && i2 >= 0)
-	{
-		vec4 shear2 = vertexCurrBuffer[i2];
-		vec4 velNeigh = shear2 - vertexPrevBuffer[i2];
-		force += springForce(vel, velNeigh, current, shear2, shearRest);
-	}
-	if (leftIndex % perRow < col && i3 < perRow*perRow)
-	{
-		vec4 shear3 = vertexCurrBuffer[i3];
-		vec4 velNeigh = shear3 - vertexPrevBuffer[i3];
-		force += springForce(vel, velNeigh, current, shear3, shearRest);
-	}
-	if (rightIndex % perRow > col && i4 < perRow*perRow)
-	{
-		vec4 shear4 = vertexCurrBuffer[i4];
-		vec4 velNeigh = shear4 - vertexPrevBuffer[i4];
-		force += springForce(vel, velNeigh, current, shear4, shearRest);
-	}
-
+	neighbors[S1].index = (rightIndex != NO_NEIGHBOR && rightIndex - perRow >= 0) ? rightIndex - perRow:NO_NEIGHBOR;
+	neighbors[S2].index = (leftIndex != NO_NEIGHBOR && leftIndex - perRow >= 0) ? leftIndex - perRow : NO_NEIGHBOR;
+	neighbors[S3].index = (leftIndex != NO_NEIGHBOR && leftIndex + perRow < perRow*perRow) ? leftIndex + perRow : NO_NEIGHBOR;
+	neighbors[S4].index = (rightIndex != NO_NEIGHBOR && rightIndex + perRow < perRow*perRow) ? rightIndex + perRow : NO_NEIGHBOR;
 	//bending force
-	int up2i, down2i, left2i, right2i;
-	up2i = vertexIndex - perRow * 2;
-	down2i = vertexIndex + perRow * 2;
-	right2i = vertexIndex + 2;
-	left2i = vertexIndex - 2;
-	if (up2i > 0)
+	neighbors[RIGHT2].index = ((vertexIndex + 2) % perRow > col) ? vertexIndex + 2 : NO_NEIGHBOR;
+	neighbors[LEFT2].index = ((vertexIndex - 2) % perRow < col) ? vertexIndex - 2 : NO_NEIGHBOR;
+	neighbors[DOWN2].index = ((vertexIndex + perRow * 2) < perRow*perRow) ? vertexIndex + perRow * 2 : NO_NEIGHBOR;
+	neighbors[UP2].index = ((vertexIndex - perRow * 2) >= 0) ? vertexIndex - perRow * 2 : NO_NEIGHBOR;
+	for (int i = 0; i < 4; i++)
 	{
-		vec4 up2 = vertexCurrBuffer[up2i];
-		vec4 velNeigh = up2 - vertexPrevBuffer[up2i];
-		force += springForce(vel, velNeigh, current, up2, structRest * 2);
+		neighbors[i].rest = structRest;
+		neighbors[i].stiff = STRUCT_STIFF;
+		neighbors[i].damp = STRUCT_DAMP;
 	}
-	if (down2i < perRow*perRow)
+	for (int i = 4; i < 8; i++)
 	{
-		vec4 down2 = vertexCurrBuffer[down2i];
-		vec4 velNeigh = down2 - vertexPrevBuffer[down2i];
-		force += springForce(vel, velNeigh, current, down2, structRest * 2);
-	}
-	if (right2i % perRow > col)
-	{
-		vec4 right2 = vertexCurrBuffer[right2i];
-		vec4 velNeigh = right2 - vertexPrevBuffer[right2i];
-		force += springForce(vel, velNeigh, current, right2, structRest * 2);
-	}
-	if (left2i %perRow < col)
-	{
-		vec4 left2 = vertexCurrBuffer[left2i];
-		vec4 velNeigh = left2 - vertexPrevBuffer[left2i];
-		force += springForce(vel, velNeigh, current, left2, structRest * 2);
-	}
+		neighbors[i].rest = shearRest;
+		neighbors[i].stiff = SHEAR_STIFF;
+		neighbors[i].damp = SHEAR_DAMP;
 
+	}
+	for (int i = 8; i < 12; i++)
+	{
+		neighbors[i].rest = structRest * 2;
+		neighbors[i].stiff = BEND_STIFF;
+		neighbors[i].damp = BEND_DAMP;
+	}
+	//adding spring forces
+	for (int i = 0; i <12; i++)
+	{
+		if (neighbors[i].index == NO_NEIGHBOR)
+			continue;
+		vec4 p_neighbor = vertexCurrBuffer[neighbors[i].index];
+		vec4 v_neighbor = p_neighbor - vertexPrevBuffer[neighbors[i].index];
+		force += springForce(vel, v_neighbor, current, p_neighbor, neighbors[i].rest,neighbors[i].stiff, neighbors[i].damp);
+	}
 
 	// Calculate Normal
 	vec3 normal = vec3(0.0, 0.0, 0.0);
@@ -217,12 +229,59 @@ void main() {
 
 	normalBuffer[vertexIndex] = normalize(vec4(normal,1));
 
-	float rnd = rand(vec2(1.3, 12)) * 0.04;
+	float rnd = rand(vec2(0.1, 12)) *0.4 ;
 
 	if (isWind > 0)
 	{
 		force += rnd * windForce(normalize(vec4(normal, 1))) + vel * DEFAULT_DAMPING;
 	}
+
+
+	//friction check
+	vec4 sphereCenter = vec4(sphereX, 0, 0, 1);
+	float currDist = length(current.xyz - sphereCenter.xyz);
+	float radius = 0.51;
+	//if (false)
+
+	if (currDist <= radius+0.0005)
+	{
+		vec3 normal = normalize(current.xyz - sphereCenter.xyz);
+		vec3 tangent = normalize(cross(cross(normal, force.xyz), normal));
+		//수직항력
+		float vertical = max(dot(force.xyz, -normal), 0);
+		//수평성분 (force)
+		float horizontal = max(dot(force.xyz, tangent), 0);
+		//마찰계수
+
+		if (vertical != 0)
+		{
+			float kfr = 0.5;
+			//마찰력0
+			float friction = vertical * kfr;
+
+			force = max(horizontal - friction, 0) * vec4(tangent, 0) + vel*-0.75;
+
+			if (length(force) > 0 || vertical == 0)
+				movable = true;
+			else
+			{
+				movable = false;
+			}
+		}
+		else
+		{
+			force += GRAVITY * mass + vel * GRAVITY_DAMPING;
+		}
+		
+	}
+	else
+	{
+		force += GRAVITY * mass + vel * GRAVITY_DAMPING;
+	}
+
+
+
+
 	//verlet integration
 	vec4 acceleration;
 	if (mass == 0)
@@ -235,15 +294,81 @@ void main() {
 	}
 	vec4 next = current + vel*dt + acceleration * dt * dt;
 
+	if (movable)
+		vertexOutBuffer[vertexIndex] = next;
+
+
 	//vec4 next = 2.0 * current - previous + acceleration * dt * dt;
 
+	barrier();
+
+	//stretching constraint
+	vec4 adjusted = next;
+	if (leftIndex != NO_NEIGHBOR && mass != 0)
+	{
+		vec4 left = vertexOutBuffer[leftIndex];
+		vec4 far = adjusted - left;
+		if (length(far) > structRest * 1.1)
+		{
+			vec4 fix = normalize(-far)*(length(far) - structRest*1.1) / 2;
+			adjusted = adjusted + fix;
+		}
+	}
+	if (rightIndex != NO_NEIGHBOR && mass != 0)
+	{
+		vec4 left = vertexOutBuffer[rightIndex];
+		vec4 far = adjusted - left;
+		if (length(far) > structRest * 1.1)
+		{
+			vec4 fix = normalize(-far)*(length(far) - structRest*1.1) / 2;
+			adjusted = adjusted + fix;
+		}
+	}
+	if (upIndex != NO_NEIGHBOR && mass != 0)
+	{
+		vec4 up = vertexOutBuffer[upIndex];
+		vec4 far = adjusted - up;
+		if (length(far) > structRest * 1.1)
+		{
+			vec4 fix = normalize(-far)*(length(far) - structRest*1.1);
+			adjusted = adjusted + fix;
+		}
+	}
+	/*/
+	if (neighbors[S1].index != NO_NEIGHBOR && mass != 0)
+	{
+		vec4 left = vertexOutBuffer[neighbors[S1].index];
+		vec4 far = adjusted - left;
+		if (length(far) > shearRest * 1.2)
+		{
+			vec4 fix = normalize(-far)*(length(far) - shearRest*1.2);
+			adjusted = adjusted + fix;
+		}
+	}
+	if (neighbors[S2].index != NO_NEIGHBOR && mass != 0)
+	{
+		vec4 left = vertexOutBuffer[neighbors[S2].index];
+		vec4 far = adjusted - left;
+		if (length(far) > shearRest * 1.2)
+		{
+			vec4 fix = normalize(-far)*(length(far) - shearRest*1.2);
+			adjusted = adjusted + fix;
+		}
+	}
+	*/
+	if (movable)
+	{
+		next = adjusted;
+	}
+
+	barrier();
+
 	//collision with sphere
-	vec4 X0 = inv_sphere * next;
 	vec3 d0 = next.xyz - vec3(sphereX, 0, 0); // center of sphere vec3(0, 0, 0)
 	float dist = sqrt(d0.x * d0.x + d0.y * d0.y + d0.z * d0.z);
-	float radius = 0.55;
+	vec4 X0 = inv_sphere * next;
 
-	if(dist < radius) 
+	if (dist < radius)
 	{
 		d0 = (radius - dist) * d0 / dist;
 
@@ -261,18 +386,21 @@ void main() {
 		transformInv /= dot(transformInv, transformInv);
 		d.z = dot(d0, transformInv);
 
-		next += vec4(d,1);
+		next += vec4(d, 1);
 		vertexOutBuffer[vertexIndex] = vec4(next.xyz, 1);
 	}
 	else
 	{
-		vertexOutBuffer[vertexIndex] = next;
+		if (movable)
+			vertexOutBuffer[vertexIndex] = next;
 	}
+
 
 	if(vertexOutBuffer[vertexIndex].z < -1)
 	{
 		vertexOutBuffer[vertexIndex] = vertexCurrBuffer[vertexIndex];
 	}
-	
+
 	barrier();
+
 }
