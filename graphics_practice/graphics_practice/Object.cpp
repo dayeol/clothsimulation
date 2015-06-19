@@ -39,7 +39,6 @@ void Object::traverse()
 
 void Object::traverseReset()
 {
-	cout << "sdf" << endl;
 	reset();
 
 	if (child != NULL)

@@ -81,6 +81,7 @@ void Control::keyDown(unsigned char key, int x, int y)
 	case 'r':
 		//¸®¼Â
 		sceneObject->traverseReset();
+		kfr = 0.5;
 		break;
 	case 'x':
 		//ÁÜ ¾Æ¿ô

@@ -110,6 +110,14 @@ void drawScene()
 	}
 	skyShader.UnUse();
 
+	ostringstream ss;
+	ss << controller.kfr;
+	string currentKFR = "Frictional Coefficient: " + ss.str();
+	glRasterPos2f(-0.9, 0.9);
+	glColor3f(1, 0, 0);
+	for (int i = 0; i < currentKFR.length(); i++)
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, currentKFR[i]);
+
 	sceneObject->traverse();
 
 }
