@@ -25,7 +25,7 @@ Floor::Floor(float _x, float _y)
 			float right = i + 1 + x;
 			float up = j + 1 + y;
 			float down = j + y;
-
+			
 			vertices.push_back(vec4(i - 0.5, j  - 0.5, -1, 1));
 			vertices.push_back(vec4(i - 0.5, j  + 0.5, -1, 1));
 			vertices.push_back(vec4(i + 0.5, j - 0.5, -1, 1));
@@ -71,10 +71,12 @@ void Floor::draw()
 	{
 		glUniform1i(objectShader("isWireframe"), controller.isWireframe);
 		glUniform1i(objectShader("isFloor"), 1);
+		glUniform1i(objectShader("hasNormal"), 0);
+		glUniform1i(objectShader("isSpecular"), 0);
 
 		glActiveTexture(GL_TEXTURE4);
 		glEnable(GL_TEXTURE_2D);
-		glUniform1i(program("TextureColor"), 4);
+		glUniform1i(objectShader("TextureColor"), 4);
 		glBindTexture(GL_TEXTURE_2D, texture);
 
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -88,7 +90,7 @@ void Floor::draw()
 		glVertexAttribPointer(objectShader["v_normal"], 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
 		bufferIndex += sizeof(vec3) * normals.size();
 		
-		glUniformMatrix4fv(objectShader("ModelView"), 1, GL_TRUE, model_view);
+		glUniformMatrix4fv(objectShader("ModelView"), 1, GL_TRUE, model_view * Scale(0.5, 0.5, 1));
 		
 		for (int i = 0; i < size; i++)
 			glDrawArrays(controller.isWireframe?GL_LINE_LOOP:GL_TRIANGLES, i * 3, 3);
@@ -100,4 +102,8 @@ void Floor::draw()
 	objectShader.UnUse();
 
 	model_view = mvstack.pop();
+}
+
+void Floor::reset()
+{
 }

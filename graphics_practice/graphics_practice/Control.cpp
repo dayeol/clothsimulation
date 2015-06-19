@@ -77,8 +77,7 @@ void Control::keyDown(unsigned char key, int x, int y)
 		break;
 	case 'r':
 		//¸®¼Â
-		rotationSpeedFactor = 1.0f;
-		revolutionSpeedFactor = 1.0f;
+		sceneObject->traverseReset();
 		break;
 	case 'x':
 		//ÁÜ ¾Æ¿ô

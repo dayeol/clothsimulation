@@ -13,7 +13,9 @@ public:
 	~Object(void);
 	
 	void traverse();
+	void traverseReset();
 	virtual void draw()=0;
+	virtual void reset()=0;
 
 	//handle hierarchy
 	bool addSibling(Object*);

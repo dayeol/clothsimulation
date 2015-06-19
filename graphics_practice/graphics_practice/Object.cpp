@@ -37,6 +37,22 @@ void Object::traverse()
 	}
 }
 
+void Object::traverseReset()
+{
+	cout << "sdf" << endl;
+	reset();
+
+	if (child != NULL)
+	{
+		child->traverseReset();
+	}
+
+	if (sibling != NULL)
+	{
+		sibling->traverseReset();
+	}
+}
+
 bool Object::addChild(Object* newChild)
 {
 	if (newChild == NULL)

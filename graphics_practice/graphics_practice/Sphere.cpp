@@ -11,7 +11,7 @@ Sphere::Sphere(int id, int _numVertex)
 
 	texture[0] = SOIL_load_OGL_texture
 	(
-		"ball.jpg",
+		"ball2.jpg",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_TEXTURE_REPEATS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
@@ -19,7 +19,7 @@ Sphere::Sphere(int id, int _numVertex)
 
 	texture[1] = SOIL_load_OGL_texture
 		(
-		"ball_normal.png",
+		"ball2_normal.png",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_TEXTURE_REPEATS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
@@ -48,15 +48,17 @@ void Sphere::draw()
 	{
 		glUniform1i(objectShader("isWireframe"), controller.isWireframe);
 		glUniform1i(objectShader("isFloor"), 0);
-		
+		glUniform1i(objectShader("hasNormal"), 1);
+		glUniform1i(objectShader("isSpecular"), 1);
+
 		glActiveTexture(GL_TEXTURE2);
 		glEnable(GL_TEXTURE_2D);
-		glUniform1i(program("TextureColor"), 2);
+		glUniform1i(objectShader("TextureColor"), 2);
 		glBindTexture(GL_TEXTURE_2D, texture[0]);
 
 		glActiveTexture(GL_TEXTURE3);
 		glEnable(GL_TEXTURE_2D);
-		glUniform1i(program("TextureNormal"), 3);
+		glUniform1i(objectShader("TextureNormal"), 3);
 		glBindTexture(GL_TEXTURE_2D, texture[1]);
 
 		model_view = model_view * Translate(controller.sphereX, 0, 0) * Scale(0.5);
@@ -87,4 +89,9 @@ void Sphere::draw()
 	objectShader.UnUse();
 
 	model_view = mvstack.pop();
+}
+
+void Sphere::reset()
+{
+	controller.sphereX = 0;
 }
