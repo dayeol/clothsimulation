@@ -93,6 +93,7 @@ void Cloth::draw()
 	{
 		computeShader.Use();
 		{
+			glUniform1f(computeShader("kfr"), controller.kfr);
 			glUniform1i(computeShader("isWind"), controller.isWind);
 			glUniform1i(computeShader("isPin"), controller.isPin);
 			glUniformMatrix4fv(computeShader("sphere"), 1, GL_TRUE, controller.sphere * Translate(controller.sphereX, 0, 0));

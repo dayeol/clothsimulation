@@ -151,6 +151,7 @@ void initShader()
 	computeShader.AddUniform("shearRest");//rest distance of shear spring
 	computeShader.AddUniform("sphere"); // sphere matrix
 	computeShader.AddUniform("sphereX"); // sphere x position
+	computeShader.AddUniform("kfr"); //friction coefficient
 
 	//Object Shader Program
 	objectShader.LoadFromFile(GL_VERTEX_SHADER, "objectVert.glsl");
@@ -321,6 +322,7 @@ void init()
 		glUniform1f(computeShader("shearRest"), sqrt(2) * (C_HEIGHT / ROWS));
 		glUniformMatrix4fv(computeShader("sphere"), 1, GL_TRUE, controller.sphere);
 		glUniform1f(computeShader("sphereX"), controller.sphereX);
+		glUniform1f(computeShader("kfr"), controller.kfr);
 	}
 	computeShader.UnUse();
 
@@ -387,6 +389,19 @@ void timer(int input)
 		controller.sphereX -= 0.01;
 	else if (controller.sphereMovingRight)
 		controller.sphereX += 0.01;
+	
+	if (controller.frictionUp)
+	{
+		controller.kfr += 0.01;
+		if (controller.kfr > 5)
+			controller.kfr = 5;
+	}
+	else if (controller.frictionDown)
+	{
+		controller.kfr -= 0.01;
+		if (controller.kfr < 0)
+			controller.kfr = 0;
+	}
 
 	glutTimerFunc(1, timer, 0);
 	glutPostRedisplay();

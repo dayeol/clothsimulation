@@ -29,9 +29,12 @@ public:
 	bool movingDown;
 	bool sphereMovingLeft;
 	bool sphereMovingRight;
+	bool frictionUp;
+	bool frictionDown;
 
 	float sphereX;
 	mat4 sphere;
+	float kfr;
 
 	void launchRocketOnCountdown();
 	void launchRocket();
