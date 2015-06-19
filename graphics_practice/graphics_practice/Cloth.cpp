@@ -32,7 +32,7 @@ Cloth::Cloth(float _x, float _y, int _numX, int _numY)
 		{
 			//내분점들을 찍는다. 총 particle은 (numX + 1) * (numY + 1) 개가 된다.
 			particles.push_back(vec4(
-				(-y*j) / numY,
+				((-y/2)*j + (y / 2)*(numY-j)) / numY,
 				((-x / 2)*i + (x / 2)*(numX - i)) / numX, 
 				1,
 				1.0));
@@ -103,7 +103,7 @@ void Cloth::draw()
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, g_normalsBuffer);
 
 			// Process all vertices.
-			glDispatchCompute(ROWS, ROWS, 1);
+			glDispatchCompute(1, 1, 1);
 
 			// Make sure, all vertices and normals are written.
 			glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);

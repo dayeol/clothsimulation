@@ -88,7 +88,7 @@ void Control::keyDown(unsigned char key, int x, int y)
 		zoomingIn = true;
 		break;
 	case 'o':
-		isPin = false;
+		isPin = 0;
 		break;
 	case 'p':
 		camera.toggleMode();
