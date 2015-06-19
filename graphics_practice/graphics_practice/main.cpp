@@ -11,8 +11,8 @@
 #include <cstdlib>
 
 
-#define C_WIDTH 2.0
-#define C_HEIGHT 2.0
+#define C_WIDTH 1.5
+#define C_HEIGHT 1.5
 const float timeStep = 0.1f;
 
 Control control;  
@@ -205,6 +205,7 @@ void initScene()
 	sphereObjLoader.addNormals();
 	Sphere * sphere = new Sphere(0, sphereObjLoader.faces.size() * 3);
 	Bar * bar = new Bar();
+	bar->setm(Translate(vec3(-0.25, 0, 0)));
 	Skybox * skybox = new Skybox();
 	
 	sceneObject->addChild(cloth);

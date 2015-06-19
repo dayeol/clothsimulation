@@ -93,8 +93,12 @@ void Floor::draw()
 		glUniformMatrix4fv(objectShader("ModelView"), 1, GL_TRUE, model_view * Scale(0.5, 0.5, 1));
 		
 		for (int i = 0; i < size; i++)
-			glDrawArrays(controller.isWireframe?GL_LINE_LOOP:GL_TRIANGLES, i * 3, 3);
-
+		{
+			//don't draw at wireframe mode
+			if (controller.isWireframe)
+				continue;
+			glDrawArrays(controller.isWireframe ? GL_LINE_LOOP : GL_TRIANGLES, i * 3, 3);
+		}
 		glActiveTexture(GL_TEXTURE4);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glDisable(GL_TEXTURE_2D);

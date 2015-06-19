@@ -230,13 +230,14 @@ void main() {
 
 	normalBuffer[vertexIndex] = normalize(vec4(normal,1));
 
-	float rnd = rand(vec2(0.1, 12)) *0.35 ;
+	float rnd = rand(vec2(0.1, 12)) *0.25 ;
 
 	if (isWind > 0)
 	{
 		force += rnd * windForce(normalize(vec4(normal, 1))) + vel * DEFAULT_DAMPING;
 	}
 
+	force += GRAVITY * mass + vel * GRAVITY_DAMPING;
 
 	//friction check
 	vec4 sphereCenter = vec4(sphereX, 0, 0, 1);
@@ -275,10 +276,7 @@ void main() {
 		}
 		
 	}
-	else
-	{
-		force += GRAVITY * mass + vel * GRAVITY_DAMPING;
-	}
+
 
 
 
@@ -335,7 +333,7 @@ void main() {
 			adjusted = adjusted + fix;
 		}
 	}
-	/*/
+	
 	if (neighbors[S1].index != NO_NEIGHBOR && mass != 0)
 	{
 		vec4 left = vertexOutBuffer[neighbors[S1].index];
@@ -356,7 +354,7 @@ void main() {
 			adjusted = adjusted + fix;
 		}
 	}
-	*/
+	
 	if (movable)
 	{
 		next = adjusted;
