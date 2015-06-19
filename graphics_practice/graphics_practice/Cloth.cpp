@@ -166,8 +166,6 @@ void Cloth::draw()
 
 	shadowShader.Use();
 	{
-		glUniform1i(shadowShader("isWireframe"), controller.isWireframe);
-
 		glActiveTexture(GL_TEXTURE10);
 		glEnable(GL_TEXTURE_2D);
 		glUniform1i(shadowShader("TextureColor"), 10);
@@ -182,8 +180,12 @@ void Cloth::draw()
 		// Draw Lines
 		glBindBuffer(GL_ARRAY_BUFFER, g_shadowBuffer);
 		glVertexAttribPointer(shadowShader["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, 0);
-		for (int i = 0; i < numTriangle; i++)
-			glDrawElements(controller.isWireframe ? GL_LINE_LOOP : GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, &(indices[i * 3]));
+		
+		if (controller.isWireframe == false)
+		{
+			for (int i = 0; i < numTriangle; i++)
+				glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, &(indices[i * 3]));
+		}
 
 		glActiveTexture(GL_TEXTURE10);
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -219,6 +221,10 @@ void Cloth::reset()
 
 			glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_verticesBuffer[2]);
 			glBufferData(GL_SHADER_STORAGE_BUFFER, size, &particles[0], GL_DYNAMIC_DRAW);
+
+			const int shadowSize = shadows.size() * sizeof(vec4);
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_shadowBuffer);
+			glBufferData(GL_SHADER_STORAGE_BUFFER, shadowSize, &shadows[0], GL_DYNAMIC_DRAW);
 
 			const int normalSize = particleNormals.size() * sizeof(vec4);
 			glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_normalsBuffer);

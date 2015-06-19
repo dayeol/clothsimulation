@@ -189,7 +189,6 @@ void initShader()
 	shadowShader.AddUniform("ModelView");
 	shadowShader.AddUniform("Projection");
 	shadowShader.AddUniform("LookAt");
-	shadowShader.AddUniform("isWireframe");
 	shadowShader.AddUniform("TextureColor");
 
 	//Object Shader Program
