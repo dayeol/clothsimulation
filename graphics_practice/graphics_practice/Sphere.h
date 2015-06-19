@@ -9,6 +9,7 @@ public:
 	Sphere(int sphere_id, int num);
 	~Sphere();
 	virtual void draw();
+	virtual void reset();
 	static int sphereOffset;
 
 protected:

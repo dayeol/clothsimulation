@@ -168,3 +168,30 @@ void Cloth::draw()
 	}
 	model_view = mvstack.pop();
 }
+
+void Cloth::reset()
+{
+	controller.doAnimation = false;
+	controller.isWireframe = false;
+	controller.isPin = true;
+	controller.isWind = false;
+	for (int j = 0; j <= numY; j++)
+	{
+		for (int i = 0; i <= numX; i++)
+		{
+			const int size = particles.size() * sizeof(vec4);
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_verticesBuffer[0]);
+			glBufferData(GL_SHADER_STORAGE_BUFFER, size, &particles[0], GL_DYNAMIC_DRAW);
+
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_verticesBuffer[1]);
+			glBufferData(GL_SHADER_STORAGE_BUFFER, size, &particles[0], GL_DYNAMIC_DRAW);
+
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_verticesBuffer[2]);
+			glBufferData(GL_SHADER_STORAGE_BUFFER, size, &particles[0], GL_DYNAMIC_DRAW);
+
+			const int normalSize = particleNormals.size() * sizeof(vec4);
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_normalsBuffer);
+			glBufferData(GL_SHADER_STORAGE_BUFFER, normalSize, &particleNormals[0], GL_DYNAMIC_DRAW);
+		}
+	}
+}

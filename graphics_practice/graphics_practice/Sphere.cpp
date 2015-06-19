@@ -88,3 +88,8 @@ void Sphere::draw()
 
 	model_view = mvstack.pop();
 }
+
+void Sphere::reset()
+{
+	controller.sphereX = 0;
+}

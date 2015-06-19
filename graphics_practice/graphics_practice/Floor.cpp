@@ -101,3 +101,7 @@ void Floor::draw()
 
 	model_view = mvstack.pop();
 }
+
+void Floor::reset()
+{
+}

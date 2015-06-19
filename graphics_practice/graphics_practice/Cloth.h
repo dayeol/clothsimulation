@@ -8,6 +8,7 @@ public:
 	Cloth();
 	Cloth(float _x, float _y, int numX, int numY);
 	virtual void draw();
+	virtual void reset();
 
 protected:
 	int numX;

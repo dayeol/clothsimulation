@@ -9,6 +9,7 @@ public:
 	Floor(float _x, float _y);
 	~Floor();
 	virtual void draw();
+	virtual void reset();
 	
 protected:
 	float x; // size x
