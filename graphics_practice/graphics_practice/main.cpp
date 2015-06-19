@@ -4,6 +4,7 @@
 #include "Floor.h"
 #include "Cloth.h"
 #include "Sphere.h"
+#include "Bar.h"
 #include "MatrixStack.h"
 #include "SOIL.h"
 #include <cstdlib>
@@ -174,9 +175,11 @@ void initScene()
 	sphereObjLoader.addTextureCoord();
 	sphereObjLoader.addNormals();
 	Sphere * sphere = new Sphere(0, sphereObjLoader.faces.size() * 3);
+	Bar * bar = new Bar();
 	
 	sceneObject->addChild(cloth);
 	cloth->addSibling(sphere);
+	sphere->addSibling(bar);
 }
 
 void setGLOptions()

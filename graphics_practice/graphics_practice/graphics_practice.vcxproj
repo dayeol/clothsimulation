@@ -65,6 +65,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Bar.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cloth.cpp" />
     <ClCompile Include="Control.cpp" />
@@ -81,6 +82,7 @@
     <ClCompile Include="stb_image_aug.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bar.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Cloth.h" />
     <ClInclude Include="Control.h" />
