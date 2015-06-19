@@ -8,6 +8,7 @@ uniform float structRest;
 uniform float shearRest;
 uniform mat4 sphere;
 uniform float sphereX;
+uniform float kfr;
 
 //kg
 #define MASS 1
@@ -229,7 +230,7 @@ void main() {
 
 	normalBuffer[vertexIndex] = normalize(vec4(normal,1));
 
-	float rnd = rand(vec2(0.1, 12)) *0.4 ;
+	float rnd = rand(vec2(0.1, 12)) *0.35 ;
 
 	if (isWind > 0)
 	{
@@ -255,7 +256,7 @@ void main() {
 
 		if (vertical != 0)
 		{
-			float kfr = 0.5;
+			//float kfr = 0.5;
 			//¸¶Âû·Â0
 			float friction = vertical * kfr;
 

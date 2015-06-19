@@ -15,6 +15,9 @@ Control::Control()
 	isPin = true;
 	dragOriginX = 0;
 	dragOriginY = 0;
+	frictionUp = false;
+	frictionDown = false;
+	kfr = 0.5;
 }
 
 Control::~Control()
@@ -100,6 +103,12 @@ void Control::keyDown(unsigned char key, int x, int y)
 		sphereMovingRight = true;
 		//sphereX += 0.01;
 		break;
+	case 'c':
+		frictionUp = true;
+		break;
+	case 'v':
+		frictionDown = true;
+		break;
 	case 27:
 		// ESC
 		glutDestroyWindow(window_id);
@@ -163,6 +172,12 @@ void Control::keyUp(unsigned char key, int x, int y)
 		break;
 	case '.':
 		sphereMovingRight = false;
+		break;
+	case 'c':
+		frictionUp = false;
+		break;
+	case 'v':
+		frictionDown = false;
 		break;
 
 	default:
