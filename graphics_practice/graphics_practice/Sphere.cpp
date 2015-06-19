@@ -31,7 +31,7 @@ Sphere::Sphere(int id, int _numVertex)
 	}
 
 	for (int i = 0; i < numVertex; i++)
-		colors.push_back(vec4(1, 0, 1, 1));
+		shadows.push_back(vec4(0, 0, 0, 0));
 
 	totalNumberOfVertices += numVertex;
 }

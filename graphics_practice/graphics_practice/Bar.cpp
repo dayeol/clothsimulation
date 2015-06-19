@@ -178,6 +178,12 @@ Bar::Bar()
 		textures.push_back(vec2(0, 1));
 		textures.push_back(vec2(1, 0));
 		textures.push_back(vec2(1, 1));
+		shadows.push_back(vec4(0, 0, 0, 0));
+		shadows.push_back(vec4(0, 0, 0, 0));
+		shadows.push_back(vec4(0, 0, 0, 0));
+		shadows.push_back(vec4(0, 0, 0, 0));
+		shadows.push_back(vec4(0, 0, 0, 0));
+		shadows.push_back(vec4(0, 0, 0, 0));
 	}
 
 	totalNumberOfVertices += numVertex;

@@ -18,6 +18,7 @@ const float timeStep = 0.1f;
 Control control;  
 vector<vec4> vertices;
 vector<vec4> particles;
+vector<vec4> shadows;
 vector<GLushort> indices;
 
 vector<vec4> colors;
@@ -30,12 +31,15 @@ ObjectLoader planetObjLoader;
 ObjectLoader orbitObjLoader;
 ObjectLoader cubeObjLoader;
 ObjectLoader sphereObjLoader;
-GLSLShader program, computeShader, objectShader, skyShader;
+GLSLShader program, computeShader, objectShader, skyShader, shadowShader;
 
 GLuint g_verticesBuffer[3];
+GLuint g_shadowBuffer;
 GLuint g_normalsBuffer;
 GLuint vertexBuffer;
 GLuint vertexBufferCloth;
+
+GLuint shadowTexture;
 
 MatrixStack mvstack;
 mat4 model_view, projection;
@@ -119,6 +123,13 @@ void drawScene()
 	}
 	skyShader.UnUse();
 
+	shadowShader.Use();
+	{
+		glUniformMatrix4fv(shadowShader("Projection"), 1, GL_TRUE, projection);
+		glUniformMatrix4fv(shadowShader("LookAtMat"), 1, GL_TRUE, look_at);
+	}
+	shadowShader.UnUse();
+
 	ostringstream ss;
 	ss << controller.kfr;
 	string currentKFR = "Frictional Coefficient: " + ss.str();
@@ -169,6 +180,17 @@ void initShader()
 	computeShader.AddUniform("sphere"); // sphere matrix
 	computeShader.AddUniform("sphereX"); // sphere x position
 	computeShader.AddUniform("kfr"); //friction coefficient
+
+	//Shadow Shader
+	shadowShader.LoadFromFile(GL_VERTEX_SHADER, "shadowVert.glsl");
+	shadowShader.LoadFromFile(GL_FRAGMENT_SHADER, "shadowFrag.glsl");
+	shadowShader.CreateAndLinkProgram();
+	shadowShader.AddAttribute("vPosition");
+	shadowShader.AddUniform("ModelView");
+	shadowShader.AddUniform("Projection");
+	shadowShader.AddUniform("LookAt");
+	shadowShader.AddUniform("isWireframe");
+	shadowShader.AddUniform("TextureColor");
 
 	//Object Shader Program
 	objectShader.LoadFromFile(GL_VERTEX_SHADER, "objectVert.glsl");
@@ -302,6 +324,7 @@ void init()
 	}
 	objectShader.UnUse();
 
+	//skybox
 	skyShader.Use();
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -323,6 +346,21 @@ void init()
 
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_verticesBuffer[2]);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, size, &particles[0], GL_DYNAMIC_DRAW);
+
+	//shadow
+	shadowTexture = SOIL_load_OGL_texture
+	(
+		"shadow.png",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_TEXTURE_REPEATS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+	);
+
+	const int shadowSize = shadows.size() * sizeof(vec4);
+	glGenBuffers(1, &g_shadowBuffer);
+
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_shadowBuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, shadowSize, &shadows[0], GL_DYNAMIC_DRAW);
 
 	//cloth normal
 	const int normalSize = particleNormals.size() * sizeof(vec4);

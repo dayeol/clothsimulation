@@ -38,6 +38,7 @@ Cloth::Cloth(float _x, float _y, int _numX, int _numY)
 				1.0));
 			particleNormals.push_back(vec4(0.0, 0.0, 0.0, 1.0));
 			particleTextures.push_back(vec2((float)i/numX, (float)j/numY));
+			shadows.push_back(vec4(0, 0, 0, 0));
 		}
 	}
 
@@ -102,6 +103,7 @@ void Cloth::draw()
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, g_verticesBuffer[currentInput]);
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, g_verticesBuffer[currentOutput]);
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, g_normalsBuffer);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, g_shadowBuffer);
 
 			// Process all vertices.
 			glDispatchCompute(1, 1, 1);
@@ -113,6 +115,7 @@ void Cloth::draw()
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, 0);
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, 0);
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, 0);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, 0);
 		}
 		computeShader.UnUse();
 	}
@@ -160,6 +163,33 @@ void Cloth::draw()
 		//glDrawArrays(GL_POINTS, 0, (numX + 1)*(numY + 1));
 	}
 	program.UnUse();
+
+	shadowShader.Use();
+	{
+		glUniform1i(shadowShader("isWireframe"), controller.isWireframe);
+
+		glActiveTexture(GL_TEXTURE10);
+		glEnable(GL_TEXTURE_2D);
+		glUniform1i(shadowShader("TextureColor"), 10);
+		glBindTexture(GL_TEXTURE_2D, shadowTexture);
+
+		glBindBuffer(GL_ARRAY_BUFFER, g_shadowBuffer);
+		glVertexAttribPointer(shadowShader["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(shadowShader["vPosition"]);
+
+		glUniformMatrix4fv(shadowShader("ModelView"), 1, GL_TRUE, model_view);
+
+		// Draw Lines
+		glBindBuffer(GL_ARRAY_BUFFER, g_shadowBuffer);
+		glVertexAttribPointer(shadowShader["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, 0);
+		for (int i = 0; i < numTriangle; i++)
+			glDrawElements(controller.isWireframe ? GL_LINE_LOOP : GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, &(indices[i * 3]));
+
+		glActiveTexture(GL_TEXTURE10);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_TEXTURE_2D);
+	}
+	shadowShader.UnUse();
 
 	if (controller.doAnimation)
 	{

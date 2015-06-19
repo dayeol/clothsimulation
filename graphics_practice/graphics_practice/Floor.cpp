@@ -49,6 +49,13 @@ Floor::Floor(float _x, float _y)
 			textures.push_back(vec2(right / (float)(x * 2 + 1), down / (float)(y * 2 + 1)));
 			textures.push_back(vec2(right / (float)(x * 2 + 1), up / (float)(y * 2 + 1)));
 
+			shadows.push_back(vec4(0, 0, 0, 0));
+			shadows.push_back(vec4(0, 0, 0, 0));
+			shadows.push_back(vec4(0, 0, 0, 0));
+			shadows.push_back(vec4(0, 0, 0, 0));
+			shadows.push_back(vec4(0, 0, 0, 0));
+			shadows.push_back(vec4(0, 0, 0, 0));
+
 			totalNumberOfVertices+= 6;
 			size+= 2;
 		}

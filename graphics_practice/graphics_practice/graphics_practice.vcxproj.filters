@@ -190,5 +190,11 @@
     <None Include="skyVert.glsl">
       <Filter>소스 파일\shaders</Filter>
     </None>
+    <None Include="shadowFrag.glsl">
+      <Filter>소스 파일\shaders</Filter>
+    </None>
+    <None Include="shadowVert.glsl">
+      <Filter>소스 파일\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

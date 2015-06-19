@@ -115,6 +115,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="compute.glsl" />
+    <None Include="shadowFrag.glsl" />
+    <None Include="shadowVert.glsl" />
     <None Include="floorFrag.glsl" />
     <None Include="floorVert.glsl" />
     <None Include="fragment.glsl" />

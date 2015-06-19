@@ -38,6 +38,9 @@ layout(std430, binding = 3) buffer VertexOutput{
 layout(std430, binding = 4) buffer Normal{
 	vec4 normalBuffer[];
 };
+layout(std430, binding = 5) buffer Shadow{
+	vec4 shadowBuffer[];
+};
 
 
 layout(local_size_x = 1024) in;
@@ -62,6 +65,22 @@ vec4 windForce(vec4 normal)
 {
 	vec4 n = normal;
 	return dot(n, WIND) * WIND;
+}
+
+vec4 calcShadow(vec4 pos)
+{
+	vec4 light = vec4(0, 0, 5, 1);
+	vec4 diff = light - pos;
+
+	float x = light.x; 
+	float y = light.y;
+	if(diff.z != 0)
+	{
+		x = diff.x * (-1 - light.z) / diff.z + light.x;
+		y = diff.y * (-1 - light.z) / diff.z + light.y;
+	}
+
+	return vec4(x, y, -0.98, 1);
 }
 
 struct neighbor
@@ -119,6 +138,7 @@ void main() {
 	vec4 current = vertexCurrBuffer[vertexIndex];
 	vec4 previous = vertexPrevBuffer[vertexIndex];
 	vec4 currentNormal = normalBuffer[vertexIndex];
+	vec4 currentShadow = shadowBuffer[vertexIndex];
 	
 	int col = vertexIndex % perRow;
 	int colmax = perRow; //column 마지막 번호
@@ -399,6 +419,8 @@ void main() {
 	{
 		vertexOutBuffer[vertexIndex] = vertexCurrBuffer[vertexIndex];
 	}
+
+	shadowBuffer[vertexIndex] = calcShadow(vertexOutBuffer[vertexIndex]);
 
 	barrier();
 
