@@ -18,6 +18,7 @@ Control::Control()
 	frictionUp = false;
 	frictionDown = false;
 	kfr = 0.5;
+	kick = false;
 }
 
 Control::~Control()
@@ -114,6 +115,9 @@ void Control::keyDown(unsigned char key, int x, int y)
 		// ESC
 		glutDestroyWindow(window_id);
 		exit(0);
+		break;
+	case 'k':
+		kick = true;
 		break;
 	default:
 		break;

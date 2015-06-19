@@ -46,6 +46,8 @@ public:
 	bool isWind;
 	bool isPin;
 	GLboolean doAnimation;
+
+	bool kick;
 private:
 
 	bool isDragging;

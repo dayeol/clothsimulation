@@ -88,6 +88,15 @@ void drawScene()
 	projection = camera.projection();
 	look_at = camera.lookAt();
 	
+	if (controller.kick)
+	{
+		controller.sphereX += 0.1;
+		if (controller.sphereX > 30)
+		{
+			controller.kick = false;
+		}
+	}
+
 	program.Use();
 	{
 		glUniformMatrix4fv(program("Projection"), 1, GL_TRUE, projection);
