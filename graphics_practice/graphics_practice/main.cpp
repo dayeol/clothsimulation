@@ -197,6 +197,7 @@ void initScene()
 	sphereObjLoader.addNormals();
 	Sphere * sphere = new Sphere(0, sphereObjLoader.faces.size() * 3);
 	Bar * bar = new Bar();
+	bar->setm(Translate(vec3(-0.25, 0, 0)));
 	Skybox * skybox = new Skybox();
 	
 	sceneObject->addChild(cloth);
