@@ -83,6 +83,7 @@ void Control::keyDown(unsigned char key, int x, int y)
 		//¸®¼Â
 		sceneObject->traverseReset();
 		kfr = 0.5;
+		kick = false;
 		break;
 	case 'x':
 		//ÁÜ ¾Æ¿ô
