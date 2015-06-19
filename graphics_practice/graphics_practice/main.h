@@ -40,3 +40,4 @@ extern vector<GLushort> indices;
 extern GLuint g_verticesBuffer[3];
 extern GLuint g_normalsBuffer;
 extern GLuint vertexBuffer;
+extern GLuint vertexBufferCloth;

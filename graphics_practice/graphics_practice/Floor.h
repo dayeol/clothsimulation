@@ -14,5 +14,6 @@ protected:
 	float x; // size x
 	float y; // size y
 	int size;
+	GLuint texture;
 };
 

@@ -1,6 +1,7 @@
 #include "Floor.h"
 #include "Control.h"
 #include "Camera.h"
+#include "SOIL.h"
 
 Floor::Floor(float _x, float _y)
 {
@@ -8,10 +9,23 @@ Floor::Floor(float _x, float _y)
 	y = _y;
 	size = 0;
 
+	texture = SOIL_load_OGL_texture
+	(
+		"towel2.jpg",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_TEXTURE_REPEATS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+	);
+
 	for (int i = -x; i <= x; i++)
 	{
 		for (int j = -y; j <= y; j++)
 		{
+			float left = i + x;
+			float right = i + 1 + x;
+			float up = j + 1 + y;
+			float down = j + y;
+
 			vertices.push_back(vec4(i  - 0.5, j  - 0.5, -1, 1));
 			vertices.push_back(vec4(i  - 0.5, j  + 0.5, -1, 1));
 			vertices.push_back(vec4(i  + 0.5, j  + 0.5, -1, 1));
@@ -22,6 +36,10 @@ Floor::Floor(float _x, float _y)
 			normals.push_back(vec3(0, 0, 1));
 			normals.push_back(vec3(0, 0, 1));
 
+			/*textures.push_back(vec2(left / (float)(x * 2 + 1), down / (float)(y * 2 + 1)));
+			textures.push_back(vec2(left / (float)(x * 2 + 1), up / (float)(y * 2 + 1)));
+			textures.push_back(vec2(right / (float)(x * 2 + 1), down / (float)(y * 2 + 1)));
+			textures.push_back(vec2(right / (float)(x * 2 + 1), up / (float)(y * 2 + 1)));*/
 			textures.push_back(vec2(0, 0));
 			textures.push_back(vec2(0, 0));
 			textures.push_back(vec2(0, 0));
@@ -47,12 +65,33 @@ void Floor::draw()
 
 	objectShader.Use();
 	{
+		glUniform1i(objectShader("isWireframe"), controller.isWireframe);
+		glUniform1i(objectShader("isFloor"), 1);
+
+		glActiveTexture(GL_TEXTURE3);
+		glEnable(GL_TEXTURE_2D);
+		glUniform1i(program("TextureColor"), 3);
+		glBindTexture(GL_TEXTURE_2D, texture);
+
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-		glVertexAttribPointer(objectShader["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, 0);
+		unsigned int bufferIndex = 0;
+		glVertexAttribPointer(objectShader["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
+		bufferIndex += sizeof(vec4) * vertices.size();
+
+		glVertexAttribPointer(objectShader["vTexCoord"], 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
+		bufferIndex += sizeof(vec2) * textures.size();
+
+		glVertexAttribPointer(objectShader["v_normal"], 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
+		bufferIndex += sizeof(vec3) * normals.size();
+		
 		glUniformMatrix4fv(objectShader("ModelView"), 1, GL_TRUE, model_view);
-		glUniform1i(objectShader["isFloor"], 0);
+		
 		for (int i = 0; i < size; i++)
-			glDrawArrays(GL_LINE_LOOP, i * 4, 4);
+			glDrawArrays(controller.isWireframe?GL_LINE_LOOP:GL_TRIANGLE_FAN, i * 4, 4);
+
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_TEXTURE_2D);
 	}
 	objectShader.UnUse();
 

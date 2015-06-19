@@ -118,15 +118,24 @@ void Cloth::draw()
 	program.Use();
 	{
 		glUniform1i(program("isWireframe"), controller.isWireframe);
+
 		glActiveTexture(GL_TEXTURE0);
 		glEnable(GL_TEXTURE_2D);
-		glUniform1i(program["TextureColor"], 0);
+		glUniform1i(program("TextureColor"), 0);
 		glBindTexture(GL_TEXTURE_2D, texture[0]);
 
 		glActiveTexture(GL_TEXTURE1);
 		glEnable(GL_TEXTURE_2D);
-		glUniform1i(program["TextureNormal"], 1);
+		glUniform1i(program("TextureNormal"), 1);
 		glBindTexture(GL_TEXTURE_2D, texture[1]);
+
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBufferCloth);
+		glEnableVertexAttribArray(program["vTexCoord"]);
+		glVertexAttribPointer(program["vTexCoord"], 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+
+		glBindBuffer(GL_ARRAY_BUFFER, g_normalsBuffer);
+		glVertexAttribPointer(program["v_normal"], 4, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(program["v_normal"]);
 
 		glUniformMatrix4fv(program("ModelView"), 1, GL_TRUE, model_view);
 		
@@ -139,11 +148,11 @@ void Cloth::draw()
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glDisable(GL_TEXTURE_2D);
-
+		
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glDisable(GL_TEXTURE_2D);
-
+		
 		// Draw Points
 		//glBindBuffer(GL_ARRAY_BUFFER, g_verticesBuffer[currentOutput]);
 		//glVertexAttribPointer(program["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, 0);

@@ -130,11 +130,6 @@ void initShader()
 	program.AddUniform("TextureColor");
 	program.AddUniform("TextureNormal");
 	program.AddUniform("isWireframe");
-	//program.AddUniform("AmbientProduct");
-	//program.AddUniform("DiffuseProduct");
-	//program.AddUniform("SpecularProduct");
-	//program.AddUniform("LightPosition");
-	//program.AddUniform("Shininess");
 
 	//Compute Program
 	computeShader.LoadFromFile(GL_COMPUTE_SHADER, "compute.glsl");
@@ -148,7 +143,7 @@ void initShader()
 	computeShader.AddUniform("sphere"); // sphere matrix
 	computeShader.AddUniform("sphereX"); // sphere x position
 
-	//Floor Program
+	//Object Shader Program
 	objectShader.LoadFromFile(GL_VERTEX_SHADER, "objectVert.glsl");
 	objectShader.LoadFromFile(GL_FRAGMENT_SHADER, "objectFrag.glsl");
 	objectShader.CreateAndLinkProgram();
@@ -158,7 +153,8 @@ void initShader()
 	objectShader.AddUniform("ModelView");
 	objectShader.AddUniform("Projection");
 	objectShader.AddUniform("LookAt");
-	objectShader.AddUniform("textureColor");
+	objectShader.AddUniform("TextureColor");
+	objectShader.AddUniform("isWireframe");
 	objectShader.AddUniform("isFloor");
 }
 void initScene()
@@ -210,11 +206,13 @@ void init()
 	unsigned int bufferIndex = 0;
 	unsigned int bufferSize = sizeof(vec2) * particleTextures.size();
 
+	glGenBuffers(1, &vertexBufferCloth);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferCloth);
+	glBufferData(GL_ARRAY_BUFFER, bufferSize, &particleTextures[0], GL_DYNAMIC_DRAW);
+
 	program.Use();
 	{
-		glGenBuffers(1, &vertexBufferCloth);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBufferCloth);
-		glBufferData(GL_ARRAY_BUFFER, bufferSize, &particleTextures[0], GL_DYNAMIC_DRAW);
 
 		glEnableVertexAttribArray(program["vTexCoord"]);
 		glVertexAttribPointer(program["vTexCoord"], 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
@@ -224,42 +222,38 @@ void init()
 	bufferIndex = 0;
 	bufferSize = sizeof(vec4) * vertices.size() + sizeof(vec3) * normals.size() + sizeof(vec2) * textures.size();
 
+	glGenBuffers(1, &vertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, bufferSize, NULL, GL_DYNAMIC_DRAW);
+
+	glBufferSubData(GL_ARRAY_BUFFER, bufferIndex, sizeof(vec4) * vertices.size(), &vertices[0]);
+	bufferIndex += sizeof(vec4) * vertices.size();
+
+	glBufferSubData(GL_ARRAY_BUFFER, bufferIndex, sizeof(vec2) * textures.size(), &textures[0]);
+	bufferIndex += sizeof(vec2) * textures.size();
+
+	glBufferSubData(GL_ARRAY_BUFFER, bufferIndex, sizeof(vec3) * normals.size(), &normals[0]);
+	bufferIndex += sizeof(vec3) * normals.size();
+
 	objectShader.Use();
 	{
-		glGenBuffers(1, &vertexBuffer);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-		glBufferData(GL_ARRAY_BUFFER, bufferSize, NULL, GL_DYNAMIC_DRAW);
-
-		glBufferSubData(GL_ARRAY_BUFFER, bufferIndex, sizeof(vec4) * vertices.size(), &vertices[0]);
-		bufferIndex += sizeof(vec4) * vertices.size();
-
-		glBufferSubData(GL_ARRAY_BUFFER, bufferIndex, sizeof(vec2) * textures.size(), &textures[0]);
-		bufferIndex += sizeof(vec2) * textures.size();
-
-		glBufferSubData(GL_ARRAY_BUFFER, bufferIndex, sizeof(vec3) * normals.size(), &normals[0]);
-		bufferIndex += sizeof(vec3) * normals.size();
-
 		//glBufferSubData(GL_ARRAY_BUFFER, bufferIndex, sizeof(vec4) * colors.size(), &colors[0]);
 		//bufferIndex += sizeof(vec4) * colors.size();
-	}
-	objectShader.UnUse();
+		bufferIndex = 0;
 
-	/* Shader에 들어가는 Input 값들임 */
-	bufferIndex=0;
-	//Vertex Position
-	objectShader.Use();
-	{
+		glEnableVertexAttribArray(objectShader["vPosition"]);
 		glVertexAttribPointer(objectShader["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
 		bufferIndex += sizeof(vec4) * vertices.size();
-		glEnableVertexAttribArray(objectShader["vPosition"]);
 		
+		glEnableVertexAttribArray(objectShader["vTexCoord"]);
 		glVertexAttribPointer(objectShader["vTexCoord"], 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
 		bufferIndex += sizeof(vec2) * textures.size();
-		glEnableVertexAttribArray(objectShader["vTexCoord"]);
-
+		
+		glEnableVertexAttribArray(objectShader["v_normal"]);
 		glVertexAttribPointer(objectShader["v_normal"], 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
 		bufferIndex += sizeof(vec3) * normals.size();
-		glEnableVertexAttribArray(objectShader["v_normal"]);
+		
 	}
 	objectShader.UnUse();
 	
