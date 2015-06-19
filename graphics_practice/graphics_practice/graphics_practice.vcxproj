@@ -77,6 +77,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="ObjectLoader.cpp" />
+    <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="SOIL.c" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="stb_image_aug.c" />
@@ -98,6 +99,7 @@
     <ClInclude Include="MatrixStack.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectLoader.h" />
+    <ClInclude Include="Skybox.h" />
     <ClInclude Include="SOIL.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="stbi_DDS_aug.h" />
@@ -119,6 +121,8 @@
     <None Include="select.glsl" />
     <None Include="objectFrag.glsl" />
     <None Include="objectVert.glsl" />
+    <None Include="skyFrag.glsl" />
+    <None Include="skyVert.glsl" />
     <None Include="vertex.glsl" />
     <None Include="vertex_selected.glsl" />
   </ItemGroup>

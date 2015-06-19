@@ -31,7 +31,7 @@ Bar::Bar()
 
 	for (int i = 0; i < 6; i++)
 	{
-		normals.push_back(vec3(0, 0, -1));
+		normals.push_back(vec3(0, 0, 1));
 		numVertex += 1;
 	}
 
@@ -46,7 +46,7 @@ Bar::Bar()
 
 	for (int i = 0; i < 6; i++)
 	{
-		normals.push_back(vec3(-1, 0, 0));
+		normals.push_back(vec3(1, 0, 0));
 		numVertex += 1;
 	}
 
@@ -61,7 +61,7 @@ Bar::Bar()
 
 	for (int i = 0; i < 6; i++)
 	{
-		normals.push_back(vec3(1, 0, 0));
+		normals.push_back(vec3(-1, 0, 0));
 		numVertex += 1;
 	}
 
@@ -76,7 +76,7 @@ Bar::Bar()
 
 	for (int i = 0; i < 6; i++)
 	{
-		normals.push_back(vec3(0, 0, 1));
+		normals.push_back(vec3(0, 0, -1));
 		numVertex += 1;
 	}
 
@@ -91,7 +91,7 @@ Bar::Bar()
 
 	for (int i = 0; i < 6; i++)
 	{
-		normals.push_back(vec3(0, 1, 0));
+		normals.push_back(vec3(0, -1, 0));
 		numVertex += 1;
 	}
 
@@ -106,7 +106,7 @@ Bar::Bar()
 
 	for (int i = 0; i < 6; i++)
 	{
-		normals.push_back(vec3(0, -1, 0));
+		normals.push_back(vec3(0, 1, 0));
 		numVertex += 1;
 	}
 
@@ -121,7 +121,7 @@ Bar::Bar()
 
 	for (int i = 0; i < 6; i++)
 	{
-		normals.push_back(vec3(-1, 0, 0));
+		normals.push_back(vec3(1, 0, 0));
 		numVertex += 1;
 	}
 
@@ -136,7 +136,7 @@ Bar::Bar()
 
 	for (int i = 0; i < 6; i++)
 	{
-		normals.push_back(vec3(1, 0, 0));
+		normals.push_back(vec3(-1, 0, 0));
 		numVertex += 1;
 	}
 
@@ -151,7 +151,7 @@ Bar::Bar()
 
 	for (int i = 0; i < 6; i++)
 	{
-		normals.push_back(vec3(0, 1, 0));
+		normals.push_back(vec3(0, -1, 0));
 		numVertex += 1;
 	}
 
@@ -166,7 +166,7 @@ Bar::Bar()
 
 	for (int i = 0; i < 6; i++)
 	{
-		normals.push_back(vec3(0, -1, 0));
+		normals.push_back(vec3(0, 1, 0));
 		numVertex += 1;
 	}
 
@@ -195,10 +195,12 @@ void Bar::draw()
 	{
 		glUniform1i(objectShader("isWireframe"), controller.isWireframe);
 		glUniform1i(objectShader("isFloor"), 0);
+		glUniform1i(objectShader("hasNormal"), 0);
+		glUniform1i(objectShader("isSpecular"), 1);
 
 		glActiveTexture(GL_TEXTURE6);
 		glEnable(GL_TEXTURE_2D);
-		glUniform1i(program("TextureColor"), 6);
+		glUniform1i(objectShader("TextureColor"), 6);
 		glBindTexture(GL_TEXTURE_2D, texture);
 
 		glUniformMatrix4fv(objectShader("ModelView"), 1, GL_TRUE, model_view * Translate(1, 0, 0));

@@ -5,6 +5,7 @@
 #include "Cloth.h"
 #include "Sphere.h"
 #include "Bar.h"
+#include "Skybox.h"
 #include "MatrixStack.h"
 #include "SOIL.h"
 #include <cstdlib>
@@ -29,7 +30,7 @@ ObjectLoader planetObjLoader;
 ObjectLoader orbitObjLoader;
 ObjectLoader cubeObjLoader;
 ObjectLoader sphereObjLoader;
-GLSLShader program, computeShader, objectShader;
+GLSLShader program, computeShader, objectShader, skyShader;
 
 GLuint g_verticesBuffer[3];
 GLuint g_normalsBuffer;
@@ -102,6 +103,13 @@ void drawScene()
 	}
 	objectShader.UnUse();
 
+	skyShader.Use();
+	{
+		glUniformMatrix4fv(skyShader("Projection"), 1, GL_TRUE, projection);
+		glUniformMatrix4fv(skyShader("LookAtMat"), 1, GL_TRUE, look_at);
+	}
+	skyShader.UnUse();
+
 	sceneObject->traverse();
 
 }
@@ -158,6 +166,18 @@ void initShader()
 	objectShader.AddUniform("TextureNormal");
 	objectShader.AddUniform("isWireframe");
 	objectShader.AddUniform("isFloor");
+	objectShader.AddUniform("hasNormal");
+	objectShader.AddUniform("isSpecular");
+
+	//Skybox Shader Program
+	skyShader.LoadFromFile(GL_VERTEX_SHADER, "skyVert.glsl");
+	skyShader.LoadFromFile(GL_FRAGMENT_SHADER, "skyFrag.glsl");
+	skyShader.CreateAndLinkProgram();
+	skyShader.AddAttribute("vPosition");
+	skyShader.AddUniform("Projection");
+	skyShader.AddUniform("ModelView");
+	skyShader.AddUniform("LookAt");
+	skyShader.AddUniform("Skybox");
 }
 void initScene()
 {
@@ -176,10 +196,12 @@ void initScene()
 	sphereObjLoader.addNormals();
 	Sphere * sphere = new Sphere(0, sphereObjLoader.faces.size() * 3);
 	Bar * bar = new Bar();
+	Skybox * skybox = new Skybox();
 	
 	sceneObject->addChild(cloth);
 	cloth->addSibling(sphere);
 	sphere->addSibling(bar);
+	bar->addSibling(skybox);
 }
 
 void setGLOptions()
@@ -260,6 +282,15 @@ void init()
 		
 	}
 	objectShader.UnUse();
+
+	skyShader.Use();
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+		bufferIndex = 0;
+
+		glEnableVertexAttribArray(skyShader["vPosition"]);
+		glVertexAttribPointer(skyShader["vPosition"], 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(bufferIndex));
+	}
 	
 	//cloth
 	const int size = particles.size() * sizeof(vec4);

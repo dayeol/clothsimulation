@@ -84,6 +84,9 @@
     <ClCompile Include="Bar.cpp">
       <Filter>소스 파일\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="Skybox.cpp">
+      <Filter>소스 파일\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -149,6 +152,9 @@
     <ClInclude Include="Bar.h">
       <Filter>헤더 파일\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="Skybox.h">
+      <Filter>헤더 파일\Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment.glsl">
@@ -176,6 +182,12 @@
       <Filter>소스 파일\shaders</Filter>
     </None>
     <None Include="objectVert.glsl">
+      <Filter>소스 파일\shaders</Filter>
+    </None>
+    <None Include="skyFrag.glsl">
+      <Filter>소스 파일\shaders</Filter>
+    </None>
+    <None Include="skyVert.glsl">
       <Filter>소스 파일\shaders</Filter>
     </None>
   </ItemGroup>
