@@ -22,7 +22,7 @@ uniform float kfr;
 #define BEND_STIFF 15
 #define BEND_DAMP	-0.5
 
-#define GRAVITY_DAMPING -0.20
+#define GRAVITY_DAMPING -0.30
 #define DEFAULT_DAMPING -0.25
 #define WIND vec4(1.0, 0.0, 0.0, 0.0)
 
@@ -257,14 +257,14 @@ void main() {
 		force += rnd * windForce(normalize(vec4(normal, 1))) + vel * DEFAULT_DAMPING;
 	}
 
-	force += GRAVITY * mass + vel * GRAVITY_DAMPING;
+	//force += GRAVITY * mass + vel * GRAVITY_DAMPING;
 
 	//friction check
 	vec4 sphereCenter = vec4(sphereX, 0, 0, 1);
 	float currDist = length(current.xyz - sphereCenter.xyz);
-	float radius = 0.51;
+	float radius = sqrt(0.5*0.5+structRest*structRest);
 	//if (false)
-
+	force += GRAVITY * mass + vel * GRAVITY_DAMPING;
 	if (currDist <= radius+0.0005)
 	{
 		vec3 normal = normalize(current.xyz - sphereCenter.xyz);
@@ -290,15 +290,16 @@ void main() {
 				movable = false;
 			}
 		}
-		else
-		{
-			force += GRAVITY * mass + vel * GRAVITY_DAMPING;
-		}
-		
+		//else
+		//{
+		//	force += GRAVITY * mass + vel * GRAVITY_DAMPING;
+		//}
+
 	}
-
-
-
+	//else
+	//{
+	//	force += GRAVITY * mass + vel * GRAVITY_DAMPING;
+	//}
 
 
 	//verlet integration
