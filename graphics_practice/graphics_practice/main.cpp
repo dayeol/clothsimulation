@@ -31,11 +31,12 @@ ObjectLoader planetObjLoader;
 ObjectLoader orbitObjLoader;
 ObjectLoader cubeObjLoader;
 ObjectLoader sphereObjLoader;
-GLSLShader program, computeShader, objectShader, skyShader, shadowShader;
+GLSLShader program, computeShader, computeShadow, objectShader, skyShader, shadowShader;
 
 GLuint g_verticesBuffer[3];
 GLuint g_shadowBuffer;
 GLuint g_normalsBuffer;
+GLuint g_objectVerticesBuffer;
 GLuint vertexBuffer;
 GLuint vertexBufferCloth;
 
@@ -180,6 +181,12 @@ void initShader()
 	computeShader.AddUniform("sphere"); // sphere matrix
 	computeShader.AddUniform("sphereX"); // sphere x position
 	computeShader.AddUniform("kfr"); //friction coefficient
+
+	//Compute Shadow
+	computeShadow.LoadFromFile(GL_COMPUTE_SHADER, "computeShadow.glsl");
+	computeShadow.CreateAndLinkProgram();
+	computeShadow.AddUniform("row");
+	computeShadow.AddUniform("col");
 
 	//Shadow Shader
 	shadowShader.LoadFromFile(GL_VERTEX_SHADER, "shadowVert.glsl");
@@ -361,6 +368,12 @@ void init()
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_shadowBuffer);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, shadowSize, &shadows[0], GL_DYNAMIC_DRAW);
 
+	const int objVerticesSize = vertices.size() * sizeof(vec4);
+	glGenBuffers(1, &g_objectVerticesBuffer);
+
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_objectVerticesBuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, objVerticesSize, &vertices[0], GL_DYNAMIC_DRAW);
+
 	//cloth normal
 	const int normalSize = particleNormals.size() * sizeof(vec4);
 	glGenBuffers(1, &g_normalsBuffer);
@@ -380,6 +393,13 @@ void init()
 		glUniform1f(computeShader("kfr"), controller.kfr);
 	}
 	computeShader.UnUse();
+
+	computeShadow.Use();
+	{
+		glUniform1i(computeShader("row"), ROWS);
+		glUniform1f(computeShader("col"), COLS);
+	}
+	computeShadow.UnUse();
 
 	program.Use();
 	{

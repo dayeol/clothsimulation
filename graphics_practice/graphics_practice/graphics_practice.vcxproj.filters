@@ -196,5 +196,8 @@
     <None Include="shadowVert.glsl">
       <Filter>소스 파일\shaders</Filter>
     </None>
+    <None Include="computeShadow.glsl">
+      <Filter>소스 파일\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

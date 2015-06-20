@@ -23,7 +23,7 @@ using namespace std;
 
 extern class Object* sceneObject;
 
-extern GLSLShader program, computeShader, objectShader, skyShader, shadowShader;
+extern GLSLShader program, computeShader, computeShadow, objectShader, skyShader, shadowShader;
 
 extern MatrixStack mvstack;
 extern mat4 model_view, look_at;
@@ -41,6 +41,7 @@ extern vector<GLushort> indices;
 extern GLuint g_verticesBuffer[3];
 extern GLuint g_shadowBuffer;
 extern GLuint g_normalsBuffer;
+extern GLuint g_objectVerticesBuffer;
 extern GLuint vertexBuffer;
 extern GLuint vertexBufferCloth;
 extern GLuint shadowTexture;
