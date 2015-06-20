@@ -1,0 +1,12 @@
+References:
+걸레 텍스처: http://cs.gmu.edu/~jmlien/teaching/cs451/index.php?n=Main.PA4ReliefMapping
+나무 텍스처: http://www.cgtextures.com/texview.php?id=14121&PHPSESSID=8cmmi8e5m50vn24alqehajmoq3
+지형 텍스처: http://www.cgtextures.com/texview.php?id=44354&PHPSESSID=8cmmi8e5m50vn24alqehajmoq3
+큐브맵 텍스처 & 원리: http://learnopengl.com/#!Advanced-OpenGL/Cubemaps
+큐브맵 vertices information: http://learnopengl.com/code_viewer.php?code=advanced/cubemaps_skybox_data
+노말맵 생성 사이트: http://cpetry.github.io/NormalMap-Online/
+축구공 텍스처: https://www.google.co.kr/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&cad=rja&uact=8&ved=0CAcQjRw&url=https%3A%2F%2Fwww.flickr.com%2Fphotos%2Fdmswart%2F4690051366&ei=S_uEVe3CFOTSmAX0oIC4BA&bvm=bv.96339352,d.dGY&psig=AFQjCNFfPORo06Q2IBzqwKTf3YkVDfKwPw&ust=1434864837585092
+Vector, Matrix 연산: http://www.cs.unm.edu/~angel/BOOK/INTERACTIVE_COMPUTER_GRAPHICS/SIXTH_EDITION/CODE/include/
+Shading: http://www.cs.unm.edu/~angel/BOOK/INTERACTIVE_COMPUTER_GRAPHICS/SIXTH_EDITION/CODE/
+TBN 구하기: http://www.geeks3d.com/20130122/normal-mapping-without-precomputed-tangent-space-vectors/
+SOIL: http://www.lonesock.net/soil.html  
