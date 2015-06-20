@@ -38,8 +38,8 @@ ESC:		프로그램 종료
 - vertex.glsl/fragment.glsl:		particle shader
 
 3. Resources
-- ball2.jpg:				축구공 Color Texture
-- ball2_normal.png:			축구공 Normal Map Texture
+- ball.jpg:				축구공 Color Texture
+- ball_normal.png:			축구공 Normal Map Texture
 - skybox/*.jpg:				Skybox Color Texture
 - grass.jpg:				지형 Color Texture
 - wood.jpg:				나무막대 Color Texture

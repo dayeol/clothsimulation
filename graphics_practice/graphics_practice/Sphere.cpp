@@ -12,7 +12,7 @@ Sphere::Sphere(int id, int _numVertex)
 
 	texture[0] = SOIL_load_OGL_texture
 	(
-		"ball2.jpg",
+		"ball.png",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_TEXTURE_REPEATS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
@@ -20,7 +20,7 @@ Sphere::Sphere(int id, int _numVertex)
 
 	texture[1] = SOIL_load_OGL_texture
 		(
-		"ball2_normal.png",
+		"ball_normal.png",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_TEXTURE_REPEATS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
