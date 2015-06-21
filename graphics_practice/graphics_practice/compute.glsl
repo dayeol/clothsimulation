@@ -111,25 +111,6 @@ bool isNeighbor(int index)
 	return index != NO_NEIGHBOR;
 }
 
-vec3 gramSchmidt(vec3 u, vec3 v)
-{
-	vec3 uProjV;
-
-	float vDotU;
-
-	float uDotU = dot(u, u);
-
-	if (uDotU == 0.0)
-	{
-		return vec3(0.0, 0.0, 0.0);
-	}
-
-	vDotU = dot(v, u);
-
-	uProjV = u * (vDotU / uDotU);
-
-	return v - uProjV;
-}
 
 void main() {
 	neighbor neighbors[12];
@@ -219,31 +200,31 @@ void main() {
 
 	if(col < colmax - 1)
 	{
-		tangent = normalize((vertexCurrBuffer[vertexIndex + 1] - vertexCurrBuffer[vertexIndex]).xyz);
+		tangent = normalize((vertexCurrBuffer[rightIndex] - current).xyz);
 
 		if(row < rowmax - 1)
 		{
-			bitangent = normalize((vertexCurrBuffer[vertexIndex + rowmax] - vertexCurrBuffer[vertexIndex]).xyz);
+			bitangent = normalize((vertexCurrBuffer[downIndex] - current).xyz);
 			normal += normalize(cross(bitangent, tangent));	
 		}
 		if(row > 0)
 		{
-			bitangent = normalize((vertexCurrBuffer[vertexIndex] - vertexCurrBuffer[vertexIndex - rowmax]).xyz);
+			bitangent = normalize((current - vertexCurrBuffer[upIndex]).xyz);
 			normal += normalize(cross(bitangent, tangent));	
 		}
 	}
 	if(col > 0)
 	{
-		tangent = normalize((vertexCurrBuffer[vertexIndex] - vertexCurrBuffer[vertexIndex - 1]).xyz);
+		tangent = normalize((current - vertexCurrBuffer[leftIndex]).xyz);
 
 		if(row < rowmax - 1)
 		{
-			bitangent = normalize((vertexCurrBuffer[vertexIndex + rowmax] - vertexCurrBuffer[vertexIndex]).xyz);
+			bitangent = normalize((vertexCurrBuffer[downIndex] - current).xyz);
 			normal += normalize(cross(bitangent, tangent));	
 		}
 		if(row > 0)
 		{
-			bitangent = normalize((vertexCurrBuffer[vertexIndex] - vertexCurrBuffer[vertexIndex - rowmax]).xyz);
+			bitangent = normalize((current - vertexCurrBuffer[upIndex]).xyz);
 			normal += normalize(cross(bitangent, tangent));	
 		}
 	}
@@ -290,16 +271,8 @@ void main() {
 				movable = false;
 			}
 		}
-		//else
-		//{
-		//	force += GRAVITY * mass + vel * GRAVITY_DAMPING;
-		//}
-
 	}
-	//else
-	//{
-	//	force += GRAVITY * mass + vel * GRAVITY_DAMPING;
-	//}
+
 
 
 	//verlet integration
